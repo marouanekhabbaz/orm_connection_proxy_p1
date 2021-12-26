@@ -7,12 +7,10 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Column {
+public @interface ForeignKey {
 	String columnName();
-	boolean unique() default false;
-	boolean nullable() default true ;
-	String dataType();
-	String defaultValue() default "" ;
-	String  check() default "";
-	String refrences() default ""; //	INTEGER NOT NULL REFERENCES users(id),
+//	INTEGER NOT NULL REFERENCES users(id),
+	
+	String refetences();
+
 }

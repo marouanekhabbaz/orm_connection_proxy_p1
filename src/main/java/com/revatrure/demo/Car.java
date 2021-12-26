@@ -13,16 +13,36 @@ public class Car {
 	@Id(columnName="car_id") // this has been marked as a Primary Key
 	private int id;
 	
-	@Column(columnName="car_model", nullable = false, unique = false, dataType = "VARCHAR(50)", defaultValue = "")
+	@Column(columnName="car_model", dataType ="varchar(50)", defaultValue = " 'blue' ")
 	private String model;
 	
-	@Column(columnName="color", nullable = false, unique = false, dataType = "VARCHAR(50)",defaultValue = "")
+	@Column(columnName="color", dataType = "varchar(50)", nullable = false)
 	private String color;
+	
+	@Column(columnName = "doors", dataType = "INTEGER", defaultValue= "1")
+	private int doors ;
+	
+	@Column(columnName="forignKey", dataType = "INTEGER" , refrences = "persons(person_id)")
+	private String forignKey;
+	
+	public String marouane;
+	
+	
+	public String anas ;
+	
+	
 	
 	
 	public Car() {
 	
 	}
+
+	
+	
+
+
+
+
 
 	public Car(int id, String firstName, String color) {
 		super();

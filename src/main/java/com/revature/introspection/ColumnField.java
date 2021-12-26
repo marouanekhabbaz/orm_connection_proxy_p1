@@ -50,11 +50,16 @@ public class ColumnField {
 	}
 	
 	
-	private boolean isUnique () {
+	public boolean isUnique () {
 		return field.getAnnotation(Column.class).unique();
 	}
 	
+	public String getRefrences() {
+		return field.getAnnotation(Column.class).refrences();
+	}
 	
-	
+	public String getCheck() {
+		return field.getAnnotation(Column.class).check();
+	}
 	
 }

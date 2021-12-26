@@ -11,6 +11,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import com.revature.SQL.DDL;
+import com.revature.exception.DdlException;
 import com.revature.introspection.Inspector;
 
 
@@ -51,7 +53,17 @@ public class DataBase {
 	
 	
 	
-	
+	public boolean addMappedClass(Class<?>... clazzs) throws DdlException {
+		
+		DDL ddl = new DDL();
+		
+		for(Class<?> c : clazzs) {
+			ddl.create(c);
+		}
+		
+		return true;
+		
+	}
 	
 	
 	// return a Connection object OR call on a separate class like Connection Util
@@ -78,9 +90,6 @@ public class DataBase {
 			
 			try {
 				String path = new File("src\\\\main\\\\resources\\\\application.properties").getAbsolutePath();
-			//	getConnection( url ,username , password )
-			//	prop.load(new FileReader("C:\\Users\\marouanekhabbaz\\Desktop\\Assignement\\project-0-marouanekhabbaz\\src\\main\\resources\\application.properties"));
-				
 				prop.load(new FileReader(path));
 				
 				url = prop.getProperty("url"); // this is retrieving the value of the "url" key in application.properties file
@@ -89,13 +98,13 @@ public class DataBase {
 				
 				
 				 conn = DriverManager.getConnection(url, username, password );
-				 System.out.println("connection succefull ========>");
+				 System.out.println("Connection established successfully");
 				 
 				 
 		
 			} catch (SQLException e) {
 		
-				System.out.println("Cannot establish db connection");	
+				System.out.println("Cannot establish DB connection");	
 				e.printStackTrace();
 			}catch (IOException e) {
 				e.printStackTrace();

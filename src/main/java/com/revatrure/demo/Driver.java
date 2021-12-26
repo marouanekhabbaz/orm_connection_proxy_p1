@@ -1,9 +1,12 @@
 package com.revatrure.demo;
 
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.util.List;
 
 import com.revature.SQL.DDL;
+import com.revature.SQL.DML;
+import com.revature.exception.DdlException;
 import com.revature.introspection.ColumnField;
 import com.revature.introspection.Inspector;
 import com.revature.introspection.PrimaryKeyField;
@@ -18,25 +21,68 @@ public class Driver {
 		
 		DataBase db = new DataBase().getConnection();
 		
-		Car bmw = new Car(1, "bmw", "blue");
-		
+		Car bmw = new Car(1, "bmw", "blue" );
+		Car renault = new Car(2, "renault", "red");
 		DDL d = new DDL();
 		
-	//	System.out.println(d.create(Car.class));
-		System.out.println(d.alter(Car.class, "ADD Email33 varchar(255)"));
+		DML dml = new DML();
+		
+		try {
+			d.create(Car.class);
+			dml.insert(bmw, renault);
+		} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+//		try {
+//			db.addMappedClass( Person.class , Car.class );
+//		} catch (DdlException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+//  try {
+//	System.out.println(d.create(Car.class));
+//} catch (DdlException e) {
+//	// TODO Auto-generated catch block
+//	e.printStackTrace();
+//}
 		
 		
-	//	System.out.println(d.truncate(Car.class));
 		
-	//	System.out.println(bmw);
+//		try {
+//			System.out.println(d.alter(Car.class, "ADD Email33 varchar(255)"));
+//		} catch (DdlException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
+		
+//		try {
+//			System.out.println(d.truncate(Car.class));
+//		} catch (DdlException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+  
+		
+		
+//		try {
+//		 System.out.println(d.drop(Car.class));
+//		} catch (DdlException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+	//	System.out.println(bmw);  
+	
 		
 
         // Get the all field objects of User class
 //        Field[] fields = bmw.getClass().getDeclaredFields();
 //        System.out.println(fields);
-        
-  
+//        
+//  
 //        for (int i = 0; i < fields.length; i++) {
 //        	
 //        	System.out.println(i);
@@ -50,7 +96,7 @@ public class Driver {
 //                               + fields[i].getName()
 //                               + " is " + value);
 //        }
-//		
+		
 		
 		
 //		Inspector<Class<?>> i = Inspector.of(Car.class); 

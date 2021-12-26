@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.revature.annontation.Column;
 import com.revature.annontation.Entity;
@@ -23,7 +25,7 @@ public class Inspector<T> { // we're inferring that the MetaModel class can only
 	private List<ColumnField> columnFields;
 //	private List<ForeignKeyField> foreignKeyFields;
 	
-	private HashMap<Object, Object> columnsAndValues = new HashMap<>();
+	private HashMap<String, Object> columnsAndValues = new HashMap<>();
 	
 	
 	
@@ -120,21 +122,21 @@ public class Inspector<T> { // we're inferring that the MetaModel class can only
 	 */
 	
 
-	public HashMap<Object, Object>  getColumnsAndValues(Object obj) throws IllegalArgumentException, IllegalAccessException {
+	public HashMap<String, Object>  getColumnsAndValues(Object obj) throws IllegalArgumentException, IllegalAccessException {
 	
-		this.getColumns() ;
+		List< ColumnField> columns =	this.getColumns() ;
 		
 		Field[] fields = obj.getClass().getDeclaredFields();
 	
 		for (Field field : fields) {	
 
-		Optional<ColumnField> isColumn =	columnFields.stream().filter(c-> c.getName().equals(field.getName())).findAny();
+	List<ColumnField > isColumn =	 columnFields.stream().filter(c-> c.getName().equals(field.getName())).collect(Collectors.toList());
 			
-			if(isColumn.isPresent()) {
+			if(! isColumn.isEmpty()) {
 				
 				field.setAccessible(true);
 				Object value = field.get(obj); 				
-            columnsAndValues.put(field.getName(), value);
+            columnsAndValues.put(isColumn.get(0).getColumnName(), value);
 
 			}
 				
