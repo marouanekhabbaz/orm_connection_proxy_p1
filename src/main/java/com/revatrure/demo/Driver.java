@@ -23,17 +23,27 @@ public class Driver {
 		
 		Car bmw = new Car(1, "bmw", "blue" );
 		Car renault = new Car(2, "renault", "red");
+		Person p = new Person();
 		DDL d = new DDL();
 		
 		DML dml = new DML();
 		
 		try {
-			d.create(Car.class);
-			dml.insert(bmw, renault);
-		} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
+//			dml.delete(Car.class, 1000);
+			System.out.println(	dml.update(Car.class, " color = 'green' ", " color = 'red' "));
+			
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+//		try {
+//			d.create(Car.class);
+//			dml.insert(bmw, renault );
+//		} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 //		try {
 //			db.addMappedClass( Person.class , Car.class );
