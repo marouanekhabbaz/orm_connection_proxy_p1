@@ -3,11 +3,13 @@ package com.revatrure.demo;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.util.List;
 
 import com.revature.SQL.DDL;
 import com.revature.SQL.DML;
 import com.revature.SQL.DQL;
+import com.revature.SQL.Transaction;
 import com.revature.exception.DdlException;
 import com.revature.introspection.ColumnField;
 import com.revature.introspection.Inspector;
@@ -34,15 +36,25 @@ public class Driver {
 		
 		DQL  dql = new DQL();
 		
+		Transaction t = new Transaction();
+		
 		try {
 	//	d.(Car.class, Person.class);
 			
 		//	db.addMappedClass( Person.class , Car.class );
 			
-		dml.insert(p)	;	
-		dml.insert(bmw, renault);
+//		dml.insert(p)	;	
+//		dml.insert(bmw, renault);
 		
-		System.out.println(dql.getWhere(Car.class, "color= 'blue' "));
+			t.insert(bmw, renault);
+			t.commit();
+			Savepoint x =	t.setSavePoint("marouane");
+			t.insert(bmw, renault);
+			t.rollBack(x);
+			t.commit();
+		
+		
+//		System.out.println(dql.getWhere(Car.class, "color= 'blue' "));
 		
 //		Car c =	(Car) dql.get(Car.class, 1);
 //		Person p1 = (Person) dql.get(Person.class, 1);

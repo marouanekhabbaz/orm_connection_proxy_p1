@@ -1,84 +1,175 @@
 package com.revature.SQL;
 
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.postgresql.util.PGobject;
 
 import com.revature.exception.IdDontExistException;
 import com.revature.exception.VarArgsHasDiffrentException;
 import com.revature.introspection.ColumnField;
 import com.revature.introspection.Inspector;
-
 import com.revature.util.DataBase;
 
 
-	/**
-	 * 
-	 * @author marouanekhabbaz
-	 * 
-	 * 
-	 * -DML provide methods to execute data manipulation (CRUD) statement against the database
-	 * 
-	 * -insert(Object... objs) ->
-	 * 		- Variable Arguments (Varargs)  
-	 * 		- Developer can add any number of objects in single invocation of insert() method 
-	 * 		- Objs passed should be annotated with @Entity and should all be from the same class
-	 * 		- Returns a list of created rows in the DB  
-	 * 
-	 * 
-	 * -delete(Class<?> clazz ,int id) ->
-	 * 	 		-clazz -> represent a class annotated with @Entity 
-	 * 			- condition -> custom condition example : you need to delete all rows that color is green -->  column_color = 'green' 
-	 * 					In general the condition look like this =>  column_name = 'value' 
-	 * 			- @return List of the primary key of rows that been deleted 
-	 *			- @throws SQLException
-	 *
-	 *
-	 *- delete(Class<?> clazz , String condition)
-	 *			- clazz -> represent a class annotated with @Entity 
-	 * 			-condition -> custom condition example : you need to delete all rows that color 
-	 * 			is green -->  column_color = 'green' 
-	 * 			In general the condition look like this =>  column_name = 'value' 
-	 *			- @return List of the primary key of rows that been deleted 
-	 * 			- @throws SQLException
-	 * 
-	 * -update(Class<?> clazz , String statement , String  condition ) ->
-	 * 			-  clazz -> represent a class annotated with @Entity 
-	 * 			- statement -> update statement 
-	 * 			- condition -> rows to be updated should have this condition ex: color = 'green'
-	 * 			- @return list of objects representing the rows updated in the database 
-	 * 			- @throws SQLException
-	 * 
-	 * -update(Class<?> clazz, String statement  ,int id )
-	 *  		- clazz -> represent a class annotated with @Entity 
-	 * 			- statement -> update statement 
-	 * 			- id -> primary key of the row to update 
-	 * 			- @return an object representing the row updated in the database 
-	 *			- @throws SQLException
-	 *			- @throws IdDontExistException
-	 * 			
-	 * 
-	 *
-	 */
+/**
+ * 
+ * @author marouanekhabbaz
+ * 
+ *  Transaction provide methods to execute data manipulation (CRUD) statement against the database and
+ *  gives the developer control to manage the transaction (commit , rollback ...)
+ * - All operations against the database using this class are not committed and need to invoke .commit() method to persist change.
+ * 
+ * 
+ * 
+ *
+ * 	- commit() -> To make change persistent  
+ *	- setSavePoint(String name) -> To create a save point to roll back to it later down the road 
+ * 								- @return Savepoint
+ *	- rollBack(Savepoint savePoint) -> Cancel all change made to the database after creating a savepoint 
+ *
+ * 	- rollBack() -> Delete all change made to the database since the last commit
+ * 
+ * 
+ * 
+ * -insert(Object... objs) ->
+ * 		- Variable Arguments (Varargs)  
+ * 		- Developer can add any number of objects in single invocation of insert() method 
+ * 		- Objs passed should be annotated with @Entity and should all be from the same class
+ * 		- Returns a list of created rows in the DB  
+ * 
+ * 	  
+ * -delete(Class<?> clazz ,int id) ->
+ * 	 		-clazz -> represent a class annotated with @Entity 
+ * 			- condition -> custom condition example : you need to delete all rows that color is green -->  column_color = 'green' 
+ * 					In general the condition look like this =>  column_name = 'value' 
+ * 			- @return List of the primary key of rows that been deleted 
+ *			- @throws SQLException
+ *
+ *
+ *- delete(Class<?> clazz , String condition)
+ *			- clazz -> represent a class annotated with @Entity 
+ * 			-condition -> custom condition example : you need to delete all rows that color 
+ * 			is green -->  column_color = 'green' 
+ * 			In general the condition look like this =>  column_name = 'value' 
+ *			- @return List of the primary key of rows that been deleted 
+ * 			- @throws SQLException
+ * 
+ * -update(Class<?> clazz , String statement , String  condition ) ->
+ * 			-  clazz -> represent a class annotated with @Entity 
+ * 			- statement -> update statement 
+ * 			- condition -> rows to be updated should have this condition ex: color = 'green'
+ * 			- @return list of objects representing the rows updated in the database 
+ * 			- @throws SQLException
+ * 
+ * -update(Class<?> clazz, String statement  ,int id )
+ *  		- clazz -> represent a class annotated with @Entity 
+ * 			- statement -> update statement 
+ * 			- id -> primary key of the row to update 
+ * 			- @return an object representing the row updated in the database 
+ *			- @throws SQLException
+ *			- @throws IdDontExistException
+ *
+ * 			
+*/
+	
 
-public class DML {
+
+public class Transaction {
+	private  Connection conn;
+	
+	// this block will be invoked each time the we instantiate  a new transaction 
+	 {
 	BasicDataSource connPool = DataBase.connPool;
 	
+	try {
+		conn =connPool.getConnection();
+		conn.setAutoCommit(false);
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+
+	}
+
+	 
+	
+	 /**
+	  *To make change persistent  
+	  */
+	public void commit() {
+		 try {
+			conn.commit();
+			System.out.println("Transaction  commited ");
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	
 	/**
+	 *  To create a save point to rollback to it later down the road 
 	 * 
-	 * @param columns representing a list of columns present in the class annotated with @Entity
-	 * @return a String representing the columns that will be used in the insert statement against the DB
+	 * @param name
+	 * @return Savepoint
 	 */
+	public Savepoint setSavePoint(String name) {
+		 Savepoint savepoint;
+		try {
+			savepoint = conn.setSavepoint(name);
+			System.out.println("savepoint has been created ");
+			 return savepoint;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
 	
+	/**
+	 * Cancel all change made to the database after creating a savepoint 
+	 * 
+	 * @param savePoint
+	 * 
+	 */
+	public void rollBack(Savepoint savePoint) {
+		try {
+			conn.rollback(savePoint);
+			System.out.println("rollback to a savepoint has been invoked ");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/**
+	 * Delete all change made to the database since the last commit
+	 */
+	public void rollBack() {
+		try {
+			conn.rollback();
+			System.out.println("rollback has been invoked ");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	
+	
+
 	private String columnsStatement(List< ColumnField> columns ) {
 		
 		String sql = " ( ";
@@ -130,7 +221,7 @@ public class DML {
 	
 	
 	/**
-	 * 
+	 * Not committed until invoking .commit();
 	 * @param objs takes Variable Arguments (Varargs)  , developer can add any number of objects in single invocation of insert() method 
 	 * @param objs passed in this method should be annotated with @Entity and the should all be from the same class
 	 * @return List<Object> representing the list of created rows in the DB  
@@ -171,20 +262,14 @@ public class DML {
 		}
 	
 		}
-				
-		// return rows that been created 
-		
+	
 		sql += " returning  " + inspector1.getTableName() ;
 		
 		System.out.println(sql);
 		
-		
-		 
-		try 
-		(Connection conn = connPool.getConnection()  ;
 		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(sql); )
-		{	
+		ResultSet rs = stmt.executeQuery(sql);
+		
 		List<Object> returnedRow = new ArrayList();
 		if(rs != null) {
 			 while(rs.next()) {		
@@ -196,10 +281,10 @@ public class DML {
 		return  returnedRow;
 		
 		}	
-	}
+	
 	
 	/**
-	 * 
+	 *  Not committed until invoking .commit()
 	 * @param clazz -> represent a class annotated with @Entity 
 	 * @param id -> represent the primary key of the row you want to delete in the data base 
 	 * @return  the id of the row deleted or 0 if the id passed does not exists in the database
@@ -214,11 +299,9 @@ public class DML {
 		
 		System.out.println(sql);
 		
-		try
-		(Connection conn = connPool.getConnection()  ;
 		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(sql);)
-		{
+		ResultSet rs = stmt.executeQuery(sql);
+		
 		if(rs.next()) {
 			return rs.getInt(inspector.getPrimaryKey().getColumnName()) ;	
 			
@@ -226,7 +309,7 @@ public class DML {
 			System.out.println("row with id " + id + " don't exist in the table " + inspector.getTableName());
 			return 0;
 		}
-		}
+		
 	}
 	
 	
@@ -234,6 +317,8 @@ public class DML {
 	
 	/**
 	 * 
+	 * 
+	 * Not committed until invoking .commit()
 	 * @param clazz -> represent a class annotated with @Entity 
 	 * @param condition -> custom condition example : you need to delete all rows that color is green -->  column_color = 'green' 
 	 * 					In general the condition look like this =>  column_name = 'value' 
@@ -252,11 +337,10 @@ public class DML {
 				;
 		
 		System.out.println(sql);
-		try
-		(Connection conn = connPool.getConnection()  ;
+	
 		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(sql);)
-		{
+		ResultSet rs = stmt.executeQuery(sql);
+	
 		List<Object> deletedRow = new ArrayList();
 		if(rs != null) {
 			
@@ -275,10 +359,13 @@ public class DML {
 		}
 		return deletedRow;
 		}
-	}
+	
+	
+	
 	
 	/**
 	 * 
+	 * Not committed until invoking .commit()
 	 * @param clazz -> represent a class annotated with @Entity 
 	 * @param statement -> update statement 
 	 * @param id -> primary key of the row to update 
@@ -297,10 +384,9 @@ public class DML {
 		String sql = "update " + inspector.getTableName() + " set " + statement  + " WHERE " + inspector.getPrimaryKey().getColumnName() +" =  " + id + " returning " + inspector.getTableName() ;
 		
 		System.out.println(sql);
-		try(
-		Connection conn = connPool.getConnection()  ;
+		
 		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(sql);){
+		ResultSet rs = stmt.executeQuery(sql);
 		if(rs.next()) {
 			return rs.getObject(1) ;	
 			
@@ -309,10 +395,11 @@ public class DML {
 			throw new IdDontExistException("row with id " + id + " don't exist in the table " + inspector.getTableName());
 		}
 		}
-	}
+	
 	
 	
 	/**
+	 * Not committed until invoking .commit()
 	 * @param clazz -> represent a class annotated with @Entity 
 	 * @param statement -> update statement 
 	 * @param condition -> rows to be updated should have this condition ex: color = 'green'
@@ -326,19 +413,17 @@ public class DML {
 		
 		Inspector<Class<?>> inspector = Inspector.of(clazz);
 		
-		//update  cars   set color = 'white' where  car_id = 208 returning cars
-		
 		String sql = "update " + inspector.getTableName() + " set " + statement  + " WHERE " 
 		+  condition + " returning " + inspector.getTableName() ;
 		
 		System.out.println(sql);
-		try
-		(Connection conn = connPool.getConnection()  ;
+		
+		
 		
 		Statement stmt = conn.createStatement();
 		
-		ResultSet rs = stmt.executeQuery(sql);)
-		{
+		ResultSet rs = stmt.executeQuery(sql) ;
+		
 		
 		List<Object> updatedRow = new ArrayList<>();
 		
@@ -348,13 +433,21 @@ public class DML {
 			}
 		}
 		
-		System.out.println( updatedRow.size() + " rows in the table were updated ");
+		System.out.println( updatedRow.size() + " rows in the table were updated in this transaction");
 		
 		return updatedRow;
 		
-	}
+		}
 		
 		
 	}
+	
+		
+		
+	
 
-}
+	
+
+	
+	
+

@@ -18,43 +18,25 @@ import com.revature.SQL.DDL;
 import com.revature.exception.DdlException;
 import com.revature.introspection.Inspector;
 
+/**
+ * 
+ * @author marouanekhabbaz
+ *
+ */
+
 
 public class DataBase {
 	
 	public static BasicDataSource connPool = null;
-//	 private static BasicDataSource dataSource;
 	
-	private String dbUrl;
-	private String dbUsername;
-	private String dbPassword;
-	// this is the list of classes that the user wants our ORM to "scan" aka introspect and build 
-	// as DB objects
-	private List<Inspector<Class<?>>> InspectedList;
-	
-	// This method doesn't technically follow SRP Single Responsibility Principle
-	public DataBase addAnnotatedClass(Class annotatedClass) {
 
-		
-		// first check if a linked List has been instantiated...
-		// if not, instantiate it!
-		if (InspectedList == null) {
-			InspectedList = new LinkedList<>();
-		}
-		
-		// we need to call the method that transforms a class into an appropriate
-		// data model that our ORM can introspect (a MetaModel)
-		InspectedList.add(Inspector.of(annotatedClass));
-		
-		return this; // returns the configuration object on which the addAnnotatedClass() method is being called
-	}
-	
-	public List<Inspector<Class<?>>> getMetaModels() {
-		
-		// in the case that the metaModelList of the Configuration object is empty, return an empty list.
-		// otherwise, reutrn the metaModelList.
-		return (InspectedList == null) ? Collections.emptyList() : InspectedList;
-	}
-	
+	/**
+	 * 
+	 * @param clazz 
+	 * @return
+	 * @throws DdlException
+	 * 
+	 */
 	
 	
 	public boolean addMappedClass(Class<?>... clazzs) throws DdlException {
@@ -129,6 +111,8 @@ public class DataBase {
 		}
 
 	
+	 
+	 
 	
 	
 	// return a Connection object OR call on a separate class like Connection Util
