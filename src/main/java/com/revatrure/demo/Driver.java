@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.sql.Savepoint;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.revature.SQL.DDL;
@@ -36,9 +38,44 @@ public class Driver {
 		
 		DQL  dql = new DQL();
 		
-		Transaction t = new Transaction();
+//		Inspector<Car> i = new Inspector<Car>(Car.class);
+		
+	//	Transaction t = new Transaction();
 		
 		try {
+	LinkedList<HashMap<String, Object>> rows	=	dql.joinQuerry(Car.class, Person.class);
+	
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		
+//		try {
+//			t.insert(bmw, renault);
+////			t.commit();
+//			Savepoint x =	t.setSavePoint("marouane");
+//			t.insert(bmw, renault);
+//			t.rollBack(x);
+//			t.commit();
+//			t.end();
+//			System.out.println(t);
+//		} catch (IllegalArgumentException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} catch (IllegalAccessException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} catch (SQLException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+	
+		
+//		try {
 	//	d.(Car.class, Person.class);
 			
 		//	db.addMappedClass( Person.class , Car.class );
@@ -46,12 +83,12 @@ public class Driver {
 //		dml.insert(p)	;	
 //		dml.insert(bmw, renault);
 		
-			t.insert(bmw, renault);
-			t.commit();
-			Savepoint x =	t.setSavePoint("marouane");
-			t.insert(bmw, renault);
-			t.rollBack(x);
-			t.commit();
+//			t.insert(bmw, renault);
+//			t.commit();
+//			Savepoint x =	t.setSavePoint("marouane");
+//			t.insert(bmw, renault);
+//			t.rollBack(x);
+//			t.commit();
 		
 		
 //		System.out.println(dql.getWhere(Car.class, "color= 'blue' "));
@@ -65,10 +102,10 @@ public class Driver {
 //	System.out.println("my id is " + c.getId());
 //	System.out.println("my model is " + c.getModel());
 	
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 //		try {
 //			dml.insert(bmw, renault);
@@ -77,7 +114,9 @@ public class Driver {
 //			e1.printStackTrace();
 //		}
 		
-//		Inspector<Car> i = new Inspector<Car>(Car.class);
+
+		
+		// i.getForeignKey(null)
 //		
 //		i.findAnnotatedConstructor(Car.class);
 		
@@ -123,7 +162,7 @@ public class Driver {
 		
 		
 //		try {
-//			System.out.println(d.alter(Car.class, "ADD Email33h varchar(255)"));
+//			System.out.println(d.alter(Car.class, " ADD Email varchar(255) "));
 //		} catch (DdlException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();

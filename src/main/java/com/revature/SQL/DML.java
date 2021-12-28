@@ -26,6 +26,7 @@ import com.revature.util.DataBase;
 	 * 
 	 * 
 	 * -DML provide methods to execute data manipulation (CRUD) statement against the database
+	 * - All operations against the database using this class are auto committed.
 	 * 
 	 * -insert(Object... objs) ->
 	 * 		- Variable Arguments (Varargs)  

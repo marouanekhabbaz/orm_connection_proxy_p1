@@ -7,6 +7,7 @@ import com.revature.annontation.Entity;
 import com.revature.annontation.Id;
 @Entity(tableName="persons")
 public class Person {
+	
 	@Id(columnName="person_id") // this has been marked as a Primary Key
 	private int id;
 	
@@ -22,6 +23,8 @@ public class Person {
 	@Column(columnName = "valid", dataType = "boolean")
 	private boolean isValid ;
 
+	
+	
 	@ConstructorProperties(value = { "person_id",  "person" , "age" , "doors",  "valid" })
 	public Person(int id, String model, String color, int doors, boolean isValid) {
 		super();

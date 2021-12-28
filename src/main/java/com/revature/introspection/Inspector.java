@@ -19,8 +19,10 @@ import java.util.stream.Collectors;
 import com.revature.annontation.Column;
 
 import com.revature.annontation.Entity;
+import com.revature.annontation.ForeignKey;
 import com.revature.annontation.Id;
 import com.revature.exception.EntityClassWithNoAnnotatedConstructorException;
+import com.revature.exception.NoForeignKeyFoundException;
 
 /*
  * 
@@ -159,6 +161,72 @@ public class Inspector<T> { // we're inferring that the MetaModel class can only
 		
 		return columnsAndValues;
 	}
+	
+	/**
+	 * 
+	 * @param clazzB is an table annotated with @Entity and that have a joined column to the instance of this class
+	 * @return the column that reference to the given primary key in the current class
+	 */
+	
+	
+	public ForeignKeyField getForeignKey(Class<?> clazzB) {
+		
+		Field[] fields = clazz.getDeclaredFields();
+
+		for (Field field : fields) {
+			
+			if (field.getAnnotation(ForeignKey.class)  != null) {
+				System.out.println("here");
+				ForeignKeyField	foreignKey = new 	ForeignKeyField(field);
+				String foreignKeyOfJoinedColumn = foreignKey.getJoinedColumn();
+				String joindColumn = getColumnUsingColumnName(clazzB ,foreignKeyOfJoinedColumn);
+				
+				System.out.println(foreignKeyOfJoinedColumn  );
+				System.out.println(joindColumn);
+				
+				
+				
+			if(foreignKeyOfJoinedColumn.equals(joindColumn)) {
+				return foreignKey ;
+			}
+			}
+			
+		}
+
+		
+		throw new  NoForeignKeyFoundException("Did not find a column refrencing to  " + clazzB.getName());
+	
+		}
+
+	/**
+	 * 
+	 * @param clazz
+	 * @param columnName
+	 * @return column name of the join column in this table
+	 */
+	private String getColumnUsingColumnName(Class<?> clazz ,String columnName) {
+		Inspector<?> i = of(clazz);
+		
+		List<ColumnField> columns =  i.getColumns() ;
+		
+		PrimaryKeyField primaryKey = i.getPrimaryKey();
+		if(primaryKey.getColumnName().equals(columnName)) {
+			return primaryKey.getColumnName();
+		}
+		
+		for(ColumnField column : columns) {
+			if(column.getColumnName().equals(columnName)) {
+				return column.getColumnName();
+			}
+		}
+		
+		
+		
+		 new RuntimeException(columnName + " doesn't exist in " + clazz.getName());
+		return null;
+		
+	}
+	
 	
 	
 	

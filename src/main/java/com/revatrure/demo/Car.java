@@ -1,10 +1,10 @@
 package com.revatrure.demo;
 
 import java.beans.ConstructorProperties;
+
 import java.util.Objects;
 
 import com.revature.annontation.Column;
-import com.revature.annontation.Construction;
 import com.revature.annontation.Entity;
 import com.revature.annontation.ForeignKey;
 import com.revature.annontation.Id;
@@ -25,6 +25,7 @@ public class Car {
 	@Column(columnName = "doors", dataType = "INTEGER", defaultValue= "1")
 	private int doors ;
 	
+	@ForeignKey(columnName = "forignKey", joinedColumn = "person_id" , joinedTable = "persons")
 	@Column(columnName="forignKey", dataType = "INTEGER" , refrences = "persons(person_id)")
 	private String forignKey;
 	
@@ -54,7 +55,7 @@ public class Car {
 		this.color = color;
 	}
 	
-	@Construction
+	
 	public Car(String firstName, String color) {
 		super();
 		this.model = firstName;

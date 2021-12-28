@@ -170,13 +170,13 @@ public class DDL {
 		public boolean alter(Class<?> clazz , String change) throws DdlException {
 			Inspector<Class<?>> inspector = Inspector.of(clazz); 
 			
+			String  sql1 = "alter table "  + inspector.getTableName() + " " + change ;
 		
+			
 			 try( Connection conn = connPool.getConnection();
 				 Statement		 stmt = conn.createStatement();	 ) 
 			 {
-				
-				String  sql1 = "alter table "  + inspector.getTableName() + " " + change ;
-						
+			
 				System.out.println(sql1);
 				
 				try(ResultSet rs = stmt.executeQuery(sql1) ){

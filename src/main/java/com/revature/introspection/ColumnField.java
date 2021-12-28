@@ -58,6 +58,13 @@ public class ColumnField {
 		return field.getAnnotation(Column.class).refrences();
 	}
 	
+	public String getRefrencesColumnName() {
+		String str = this.getRefrences();
+		System.out.println(str);
+		return str.substring(str.indexOf("(")+1,str.indexOf(")"));
+		
+	}
+	
 	public String getCheck() {
 		return field.getAnnotation(Column.class).check();
 	}

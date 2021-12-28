@@ -36,6 +36,10 @@ import com.revature.util.DataBase;
  *
  * 	- rollBack() -> Delete all change made to the database since the last commit
  * 
+ *  -end()-> 
+ *    		-close the connection 
+ * 			-then finalize the transaction object.
+ * 
  * 
  * 
  * -insert(Object... objs) ->
@@ -98,7 +102,24 @@ public class Transaction {
 
 	}
 
+	 /**
+	  * close the connection 
+	  * then finalize the transaction object.
+	  */
 	 
+	 public void end() {
+		 try {
+			conn.close();
+			System.out.println("Transaction ended");
+			this.finalize();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	 }
 	
 	 /**
 	  *To make change persistent  
@@ -277,6 +298,9 @@ public class Transaction {
 			 }
 		}
 		System.out.println(returnedRow);
+		
+		stmt.close();
+		rs.close();
 
 		return  returnedRow;
 		
@@ -303,10 +327,15 @@ public class Transaction {
 		ResultSet rs = stmt.executeQuery(sql);
 		
 		if(rs.next()) {
-			return rs.getInt(inspector.getPrimaryKey().getColumnName()) ;	
+			int returnedId = rs.getInt(inspector.getPrimaryKey().getColumnName()) ;
+			stmt.close();
+			rs.close();
+			return returnedId;
 			
 		}else {
 			System.out.println("row with id " + id + " don't exist in the table " + inspector.getTableName());
+			stmt.close();
+			rs.close();
 			return 0;
 		}
 		
@@ -349,11 +378,14 @@ public class Transaction {
 			 }
 			 
 			 System.out.println(deletedRow.size() + " rows was deleted from table " + inspector.getTableName());
-			
+				stmt.close();
+				rs.close();
 		}
 		else {
 			
 			System.out.println("0 row was deleted form table " + inspector.getTableName());
+			stmt.close();
+			rs.close();
 			return deletedRow;
 			
 		}
@@ -388,12 +420,19 @@ public class Transaction {
 		Statement stmt = conn.createStatement();
 		ResultSet rs = stmt.executeQuery(sql);
 		if(rs.next()) {
-			return rs.getObject(1) ;	
+			Object obj = rs.getObject(1) ;
+			stmt.close();
+			rs.close();
+			
+			return obj;
 			
 		}else {
-
+			stmt.close();
+			rs.close();
 			throw new IdDontExistException("row with id " + id + " don't exist in the table " + inspector.getTableName());
 		}
+		
+		
 		}
 	
 	
@@ -434,6 +473,9 @@ public class Transaction {
 		}
 		
 		System.out.println( updatedRow.size() + " rows in the table were updated in this transaction");
+		
+		stmt.close();
+		rs.close();
 		
 		return updatedRow;
 		

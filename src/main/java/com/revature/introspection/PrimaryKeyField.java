@@ -37,11 +37,6 @@ public class PrimaryKeyField {
 	public Field getField() {
 		return field;
 	}
-
-	
-
-	
-	
 	
 }
 

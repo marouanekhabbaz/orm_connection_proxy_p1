@@ -9,8 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ForeignKey {
 	String columnName();
-//	INTEGER NOT NULL REFERENCES users(id),
-	
-	String refetences();
+	String joinedTable();
+	String joinedColumn();
 
 }

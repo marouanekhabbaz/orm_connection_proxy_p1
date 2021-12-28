@@ -5,14 +5,18 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 
+import com.revature.introspection.ColumnField;
+import com.revature.introspection.ForeignKeyField;
 import com.revature.introspection.Inspector;
 import com.revature.util.DataBase;
 
@@ -190,7 +194,126 @@ public class DQL {
 	}
 	
 	
+	/**
+	 * 
+	 * @param querry -> represent SQL statement 
+	 * @return -> LinkedList of Hashmaps representing each row returned in the result
+	 * 			- The hashmap has key = column_name , value = the value of that column in each row 
+	 * @throws SQLException
+	 */
 	
+	public LinkedList<HashMap<String, Object>> nativeQuerry( String querry ) throws SQLException{
+		LinkedList <HashMap<String, Object>> returnedRow = new LinkedList<>();
+		try 
+		(Connection conn = connPool.getConnection()  ;
+		Statement stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery(querry ); )
+		{	
+		
+		if(rs != null) {
+			   ResultSetMetaData rsMetaData = rs.getMetaData();
+			   int countOfColumns = rsMetaData.getColumnCount();
+			   ArrayList<String> columnsNames = new ArrayList<>();
+			   for(int i = 1; i<=countOfColumns; i++) {
+				   columnsNames.add(rsMetaData.getColumnName(i));
+			   }
+			 while(rs.next()) {		
+			HashMap<String, Object> row = new HashMap<>();	 
+			// returnedRow.add( rs.getObject(1));
+			 
+			columnsNames.forEach(column-> {
+				try {
+					row.put(column, rs.getObject(column));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} );
+			
+			returnedRow.add(row);
+			
+				
+			 
+			 }
+		}
+		returnedRow.forEach(r-> System.out.println("row " + r));
+		
+		}	
+		return  returnedRow;
+	}
+	
+	
+	/**
+	 * 
+	 * @param clazzA -> first class -> has the a foreign key referencing to the primary key of the second class
+	 * @param clazzB -> second class -> has a primary key that is used as foreign key in clazzA
+	 *  @return -> LinkedList of Hashmaps representing each row returned in the result
+	 * 			- The hashmap has key = column_name , value = the value of that column in each row 
+	 * @throws SQLException
+	 * 
+	 */
+	
+	
+	public LinkedList<HashMap<String, Object>> joinQuerry( Class<?> clazzA , Class<?> clazzB ) throws SQLException{
+		Inspector<Class<?>> inspectorA = Inspector.of(clazzA);
+		Inspector<Class<?>> inspectorB = Inspector.of(clazzB);
+		System.out.println(clazzA.getName());
+		
+		ForeignKeyField foreignKey = inspectorA.getForeignKey(clazzB);
+		
+		
+		System.out.println(foreignKey.getForeignKeyName()  + " from here ===========");
+		System.out.println(foreignKey.getJoinedColumn()  + " from here ===========");
+		
+		
+		String sql = "SELECT * "
+				+ "FROM  "   + inspectorA.getTableName()  + " AS a   \n"
+				+ " JOIN "  + inspectorB.getTableName() +  " AS b  \n "
+				+  "  On a." + foreignKey.getForeignKeyName()  + " = b." +
+				foreignKey.getJoinedColumn() 
+				
+			;
+		
+		System.out.println(sql);
+		
+		LinkedList <HashMap<String, Object>> returnedRow = new LinkedList<>();
+		try 
+		(Connection conn = connPool.getConnection()  ;
+		Statement stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery( sql ); )
+		{	
+		
+		if(rs != null) {
+			   ResultSetMetaData rsMetaData = rs.getMetaData();
+			   int countOfColumns = rsMetaData.getColumnCount();
+			   ArrayList<String> columnsNames = new ArrayList<>();
+			   for(int i = 1; i<=countOfColumns; i++) {
+				   columnsNames.add(rsMetaData.getColumnName(i));
+			   }
+			 while(rs.next()) {		
+			HashMap<String, Object> row = new HashMap<>();	 
+			// returnedRow.add( rs.getObject(1));
+			 
+			columnsNames.forEach(column-> {
+				try {
+					row.put(column, rs.getObject(column));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} );
+			
+			returnedRow.add(row);
+			
+				
+			 
+			 }
+		}
+		returnedRow.forEach(r-> System.out.println("row " + r));
+		
+		}	
+		return  returnedRow;
+	}
 	
 	
 	
