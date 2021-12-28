@@ -1,6 +1,14 @@
 package com.revature.introspection;
 
+import java.beans.ConstructorProperties;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,8 +17,10 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.revature.annontation.Column;
+
 import com.revature.annontation.Entity;
 import com.revature.annontation.Id;
+import com.revature.exception.EntityClassWithNoAnnotatedConstructorException;
 
 /*
  * 
@@ -152,9 +162,6 @@ public class Inspector<T> { // we're inferring that the MetaModel class can only
 	
 	
 	
-	
-	
-	
 	// As of right now I have a way to extract the primary key of a MetaModel object
 	public PrimaryKeyField getPrimaryKey() {
 		// capture an array of its fields
@@ -171,6 +178,37 @@ public class Inspector<T> { // we're inferring that the MetaModel class can only
 		}
 		throw new RuntimeException("Did not find a field annotated with @Id in " + clazz.getName());
 	}
+	
+	
+	/**
+	 * 
+	 * @param clazz
+	 * @return the Constructor annotated with @ConstructorProperties
+	 * @throw EntityClassWithNoAnnotatedConstructorException if the class don't have 
+	 * 		  a constructor annotated with  @ConstructorProperties
+	 */
+	
+	public static  Constructor findAnnotatedConstructor(Class<?> clazz) {
+		
+		System.out.println("Printing the public constructors of class " + clazz.getName());
+		
+		 Constructor[] constructors = clazz.getConstructors();
+		
+		for (Constructor constructor : constructors) {
+
+			  Annotation annotation = constructor.getAnnotation(ConstructorProperties.class);
+			  
+			 
+			  if(annotation instanceof ConstructorProperties) {
+				String[]  s = ((ConstructorProperties) constructor.getAnnotation(ConstructorProperties.class)).value();  
+				return constructor; 
+
+			  }
+		}
+		
+		throw new EntityClassWithNoAnnotatedConstructorException("Entity class must have a constructor annotated with @ConstructorProperties");
+	}
+	
 	
 	public String getTableName() {
 		return  clazz.getAnnotation(Entity.class).tableName();

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.postgresql.util.PGobject;
 
 import com.revature.exception.IdDontExistException;
@@ -48,11 +49,28 @@ import com.revature.util.DataBase;
 	 * 			In general the condition look like this =>  column_name = 'value' 
 	 *			- @return List of the primary key of rows that been deleted 
 	 * 			- @throws SQLException
+	 * 
+	 * -update(Class<?> clazz , String statement , String  condition ) ->
+	 * 			-  clazz -> represent a class annotated with @Entity 
+	 * 			- statement -> update statement 
+	 * 			- condition -> rows to be updated should have this condition ex: color = 'green'
+	 * 			- @return list of objects representing the rows updated in the database 
+	 * 			- @throws SQLException
+	 * 
+	 * -update(Class<?> clazz, String statement  ,int id )
+	 *  		- clazz -> represent a class annotated with @Entity 
+	 * 			- statement -> update statement 
+	 * 			- id -> primary key of the row to update 
+	 * 			- @return an object representing the row updated in the database 
+	 *			- @throws SQLException
+	 *			- @throws IdDontExistException
+	 * 			
+	 * 
 	 *
 	 */
 
 public class DML {
-	Connection conn = DataBase.conn;
+	BasicDataSource connPool = DataBase.connPool;
 	
 	
 	/**
@@ -160,23 +178,24 @@ public class DML {
 		
 		System.out.println(sql);
 		
+		
+		 
+		try 
+		(Connection conn = connPool.getConnection()  ;
 		Statement stmt = conn.createStatement();
-		
-		ResultSet rs = stmt.executeQuery(sql);
-		
+		ResultSet rs = stmt.executeQuery(sql); )
+		{	
 		List<Object> returnedRow = new ArrayList();
-		
 		if(rs != null) {
-			
 			 while(rs.next()) {		
 			 returnedRow.add( rs.getObject(1));
 			 }
-			
 		}
-		
 		System.out.println(returnedRow);
+
+		return  returnedRow;
 		
-		return  returnedRow;	
+		}	
 	}
 	
 	/**
@@ -195,9 +214,11 @@ public class DML {
 		
 		System.out.println(sql);
 		
+		try
+		(Connection conn = connPool.getConnection()  ;
 		Statement stmt = conn.createStatement();
-		
-		ResultSet rs = stmt.executeQuery(sql);
+		ResultSet rs = stmt.executeQuery(sql);)
+		{
 		if(rs.next()) {
 			return rs.getInt(inspector.getPrimaryKey().getColumnName()) ;	
 			
@@ -205,7 +226,7 @@ public class DML {
 			System.out.println("row with id " + id + " don't exist in the table " + inspector.getTableName());
 			return 0;
 		}
-		
+		}
 	}
 	
 	
@@ -231,10 +252,11 @@ public class DML {
 				;
 		
 		System.out.println(sql);
-		
+		try
+		(Connection conn = connPool.getConnection()  ;
 		Statement stmt = conn.createStatement();
-		
-		ResultSet rs = stmt.executeQuery(sql);
+		ResultSet rs = stmt.executeQuery(sql);)
+		{
 		List<Object> deletedRow = new ArrayList();
 		if(rs != null) {
 			
@@ -252,15 +274,15 @@ public class DML {
 			
 		}
 		return deletedRow;
-		
+		}
 	}
 	
 	/**
 	 * 
-	 * @param clazz
-	 * @param statement
-	 * @param id
-	 * @return
+	 * @param clazz -> represent a class annotated with @Entity 
+	 * @param statement -> update statement 
+	 * @param id -> primary key of the row to update 
+	 * @return an object representing the row updated in the database 
 	 * @throws SQLException
 	 * @throws IdDontExistException
 	 */
@@ -275,10 +297,10 @@ public class DML {
 		String sql = "update " + inspector.getTableName() + " set " + statement  + " WHERE " + inspector.getPrimaryKey().getColumnName() +" =  " + id + " returning " + inspector.getTableName() ;
 		
 		System.out.println(sql);
-		
+		try(
+		Connection conn = connPool.getConnection()  ;
 		Statement stmt = conn.createStatement();
-		
-		ResultSet rs = stmt.executeQuery(sql);
+		ResultSet rs = stmt.executeQuery(sql);){
 		if(rs.next()) {
 			return rs.getObject(1) ;	
 			
@@ -286,17 +308,18 @@ public class DML {
 
 			throw new IdDontExistException("row with id " + id + " don't exist in the table " + inspector.getTableName());
 		}
-		
+		}
 	}
 	
 	
 	/**
-	 * 
-	 * @param clazz
-	 * @param statement
-	 * @param condition
-	 * @return
+	 * @param clazz -> represent a class annotated with @Entity 
+	 * @param statement -> update statement 
+	 * @param condition -> rows to be updated should have this condition ex: color = 'green'
+	 * @return list of objects representing the rows updated in the database 
 	 * @throws SQLException
+	 * 
+	 * 
 	 */
 	
 	public List<Object> update(Class<?> clazz , String statement , String  condition ) throws SQLException  {
@@ -309,10 +332,13 @@ public class DML {
 		+  condition + " returning " + inspector.getTableName() ;
 		
 		System.out.println(sql);
+		try
+		(Connection conn = connPool.getConnection()  ;
 		
 		Statement stmt = conn.createStatement();
 		
-		ResultSet rs = stmt.executeQuery(sql);
+		ResultSet rs = stmt.executeQuery(sql);)
+		{
 		
 		List<Object> updatedRow = new ArrayList<>();
 		
@@ -327,9 +353,6 @@ public class DML {
 		return updatedRow;
 		
 	}
-	
-	
-
-	
+	}
 
 }

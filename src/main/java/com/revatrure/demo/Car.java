@@ -1,9 +1,12 @@
 package com.revatrure.demo;
 
+import java.beans.ConstructorProperties;
 import java.util.Objects;
 
 import com.revature.annontation.Column;
+import com.revature.annontation.Construction;
 import com.revature.annontation.Entity;
+import com.revature.annontation.ForeignKey;
 import com.revature.annontation.Id;
 
 
@@ -36,14 +39,14 @@ public class Car {
 	public Car() {
 	
 	}
-
+	
+	
 	
 	
 
 
 
-
-
+	@ConstructorProperties(value = { "car_id",  "car_model" , "color" })
 	public Car(int id, String firstName, String color) {
 		super();
 		this.id = id;
@@ -51,7 +54,7 @@ public class Car {
 		this.color = color;
 	}
 	
-	
+	@Construction
 	public Car(String firstName, String color) {
 		super();
 		this.model = firstName;

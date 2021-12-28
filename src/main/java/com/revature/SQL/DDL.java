@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import org.apache.commons.dbcp2.BasicDataSource;
+
 import com.revatrure.demo.Car;
 import com.revature.exception.DdlException;
 import com.revature.introspection.ColumnField;
@@ -50,7 +52,10 @@ import com.revature.util.DataBase;
 
 public class DDL {
 	
-	Connection conn = DataBase.conn;
+	BasicDataSource connPool = DataBase.connPool;
+	
+
+	
 	
 
 		public DDL() {
@@ -90,11 +95,11 @@ public class DDL {
 			
 			List<ColumnField> columns = inspector.getColumns();
 		
-			try {
-				
-				Statement stmt = conn.createStatement();
-				
-				String  sql = "CREATE TABLE IF NOT EXISTS  "  + inspector.getTableName() + " (\r\n"
+			try( Connection conn = connPool.getConnection()  ;
+				Statement stmt = conn.createStatement();) 	
+			{
+				// IF NOT EXISTS  
+				String  sql = "CREATE TABLE "  + inspector.getTableName() + " (\r\n"
 						+ id.getColumnName() + " SERIAL PRIMARY KEY,\r\n";
 						
 				for(int i=0 ; i< columns.size(); i++) {		
@@ -120,8 +125,12 @@ public class DDL {
 				sql +=  ")";
 				
 				System.out.println(sql);
+				
+				try(ResultSet rs = stmt.executeQuery(sql) ){
+					
+				}
 
-				stmt.executeQuery(sql);
+				
 
 			} 
 			catch (SQLException e) {
@@ -142,7 +151,7 @@ public class DDL {
 		 * 
 		 * 
 		 * @param clazz 
-		 * @param sql -> statement to be passed Example : ADD username varchar(10);
+		 * @param change -> statement to be passed Example : ADD username varchar(10);
 		 * @return boolean
 		 * @throws DdlException
 		 * 
@@ -158,18 +167,23 @@ public class DDL {
 		 * return true or catch the exception if an error occurs 
 		 * 
 		 */
-		public boolean alter(Class<?> clazz , String sql) throws DdlException {
+		public boolean alter(Class<?> clazz , String change) throws DdlException {
 			Inspector<Class<?>> inspector = Inspector.of(clazz); 
 			
-			Statement stmt;
-			try {
-				stmt = conn.createStatement();
+		
+			 try( Connection conn = connPool.getConnection();
+				 Statement		 stmt = conn.createStatement();	 ) 
+			 {
 				
-				String  sql1 = "alter table "  + inspector.getTableName() + " " + sql ;
+				String  sql1 = "alter table "  + inspector.getTableName() + " " + change ;
 						
 				System.out.println(sql1);
 				
-				stmt.executeQuery(sql1);
+				try(ResultSet rs = stmt.executeQuery(sql1) ){
+					
+				}
+
+				
 			}
 			catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -210,14 +224,16 @@ public class DDL {
 		public boolean truncate(Class<?> clazz)  throws DdlException  {
 			Inspector<Class<?>> inspector = Inspector.of(clazz); 
 			
-			Statement stmt;
-			try {
-				stmt = conn.createStatement();
-				
+			
+			try( Connection conn = connPool.getConnection() ;
+				Statement	stmt = conn.createStatement();	) 
+			{	
 				String  sql = "truncate table "  + inspector.getTableName() ;
 						
 				System.out.println(sql);
-				stmt.executeQuery(sql);
+				try(ResultSet rs = stmt.executeQuery(sql) ){
+					
+				}
 			} 
 			catch (SQLException e) {
 		
@@ -257,19 +273,21 @@ public class DDL {
 		public boolean drop(Class<?> clazz) throws DdlException {
 			Inspector<Class<?>> inspector = Inspector.of(clazz); 
 			
-			Statement stmt;
-			try {
-				stmt = conn.createStatement();
-				
-				String  sql = "drop table  "  + inspector.getTableName() ;
-						
+			String  sql = "drop table  "  + inspector.getTableName() ;
+			
+			try( Connection conn = connPool.getConnection()  ;
+					Statement	stmt = conn.createStatement();
+					
+					) {
+			
 				System.out.println(sql);
-				
-				stmt.executeQuery(sql);
+				try(ResultSet rs = stmt.executeQuery(sql) ){
+					
+				}
+		
 			} 
 			catch (SQLException e) {
-				// TODO Auto-generated catch block
-				
+				// TODO Auto-generated catch block	
 				if(e.getMessage().equals("No results were returned by the query.")) {
 					System.out.println("Table dropped successfully");
 					return true ;

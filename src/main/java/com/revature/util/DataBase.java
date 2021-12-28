@@ -1,6 +1,7 @@
 package com.revature.util;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
@@ -11,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.dbcp2.BasicDataSource;
+
 import com.revature.SQL.DDL;
 import com.revature.exception.DdlException;
 import com.revature.introspection.Inspector;
@@ -18,7 +21,8 @@ import com.revature.introspection.Inspector;
 
 public class DataBase {
 	
-	public static Connection conn = null;
+	public static BasicDataSource connPool = null;
+//	 private static BasicDataSource dataSource;
 	
 	private String dbUrl;
 	private String dbUsername;
@@ -66,7 +70,70 @@ public class DataBase {
 	}
 	
 	
+	
+	
+	
+	
+	
+	 private static BasicDataSource getDataSource()
+	    {
+	 
+	        if (connPool == null)
+	        {
+	        	Properties prop = new Properties(); // imported from java.util
+				
+				String url = "";
+				String username = "";
+				String password = "";
+	        	
+	        	String path = new File("src\\\\main\\\\resources\\\\application.properties").getAbsolutePath();
+				try {
+					prop.load(new FileReader(path));
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				url = prop.getProperty("url"); // this is retrieving the value of the "url" key in application.properties file
+				username =  prop.getProperty("username");
+				password = prop.getProperty("password");
+				
+				
+
+				 System.out.println("Pool of Connection established successfully");
+	        	
+	            BasicDataSource dataSource = new BasicDataSource();
+	            dataSource.setUrl(url);
+	            dataSource.setUsername(username);
+	            dataSource.setPassword(password);
+	 
+	            dataSource.setMinIdle(5);
+	            dataSource.setMaxIdle(10);
+	            dataSource.setMaxOpenPreparedStatements(100);
+	 
+	            connPool = dataSource;
+	        }
+	        return connPool;
+	    }
+	
+	
+	 public DataBase getConnection() {
+					 
+					 DataBase.getDataSource();
+					 
+				return this;
+			
+		}
+
+	
+	
+	
 	// return a Connection object OR call on a separate class like Connection Util
+	 
+	 /*
 	public DataBase getConnection() {
 		
 		try {
@@ -113,4 +180,7 @@ public class DataBase {
 		
 	}
 
+
+*/
+	 
 }
