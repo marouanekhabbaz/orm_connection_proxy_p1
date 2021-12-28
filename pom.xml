@@ -9,7 +9,12 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		
+		<sonar.organization>marouanekhabbaz</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+			
 	</properties>
+	
 
 	<dependencies>
 
@@ -36,6 +41,7 @@
 			<artifactId>postgresql</artifactId>
 			<version>42.2.23</version>
 		</dependency>
+
 
 
 	</dependencies>
