@@ -1,52 +1,64 @@
-# Your ORM Name
+# orm connection proxy OCP
+
 
 ## Project Description
-Something like: A java based ORM for simplifying connecting to and from an SQL database without the need for SQL or connection management. 
+
+A java based object-relational mapping tool for PostgreSQL, this framework handles the connection to the database. and retrieve data from classes or objects then generate SQL to persist the data into the database.
+It also provides classes and methods that simplify the definition, manipulation, transaction, and querying actions from and to the database with little to no SQL or connection management.  
 
 ## Technologies Used
 
-* PostgreSQL - version 42.2.12  
+* PostgreSQL - version 42.2.23
 * Java - version 8.0  
 * Apache commons - version 2.1  
 * JUnit
+* Sonarcloud
 
 ## Features
 
-List of features ready and TODOs for future development  
-* Easy to use and straightforward user API.  
-* No need for SQL, HQL, or any databse specific language.  
-* Straightforward and simple Annotation based for ease of use. 
-* etc...
+* OCP handles the mapping of Java classes to database tables using a simple method without the need for complex configuration files.
+* Provides simple APIs for storing and retrieving Java objects directly to and from the database.
+* Easy to use and straightforward user API to store, retrieve or manipulate data using a Java class or object and OCP will handle the persistence of that into the database.  
+* Little to no SQL, or any database-specific language, But it does provide API to write and execute native SQL statements to the database.
+* OCP gives the developer 100% control over defining constraints for each column in the table such as  ( data type, Unique, primary key,    references, check, default, not null.. ) 
+* Provide transaction functionality like commit, save point, and rollback. 
+* Straightforward and simple Annotation-based for ease of use. 
+* Mapping of join columns inside of entities. 
+* All methods of DQL class returns each row from the result as a hashmap with the column name as the key, and the value is the value of that column in the table, this very similar to JSON, and make the retrieval and manipulation of the data much easier than working with ResultSet.  
+* OCP uses connection pooling.  
+* All SQL statements executed against the database are printed to the console for easier debugging.
 
-To-do list: [`for future iterations`]
-* Mapping of join columns inside of entities.    
-* Implement of aggregate functions.  
-* Allow ORM to build table based on Annotations in Entities.  
-* etc...
+
+
 
 ## Getting Started  
 Currently project must be included as local dependency. to do so:
 ```shell
-  git clone https://github.com/210517-Enterprise/*your-repo*_p1.git
-  cd *your-repo*_p1
+  git clone https://github.com/marouanekhabbaz/orm_connection_proxy.git
+  cd orm_connection_proxy
   mvn install
 ```
 Next, place the following inside your project pom.xml file:
 ```XML
   <dependency>
-    <groupId>com.revature</groupId>
-    <artifactId>*your-repo*_p1</artifactId>
-    <version>1.0-SNAPSHOT</version>
+  	<groupId>com.revature</groupId>
+	<artifactId>OrmConnectionProxyP1</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
   </dependency>
 
 ```
 
-Finally, inside your project structure you need a application.proprties file. 
- (typically located src/main/resources/)
+Finally, inside your project structure create application.proprties file in src/main/resources/. 
+
+In your application.proprties make sure to use the same keys below url , username , password 
+
+
+
  ``` 
-  url=path/to/database
-  admin-usr=username/of/database
-  admin-pw=password/of/database  
+url= your database url
+username= your  database username
+password= your database password  
+
   ```
   
 ## Usage  
