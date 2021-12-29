@@ -48,9 +48,9 @@ Next, place the following inside your project pom.xml file:
 
 ```
 
-Finally, inside your project structure create application.proprties file in src/main/resources/. 
+Finally, inside your project structure create **application.proprties** file in **src/main/resources/**. 
 
-In your application.proprties make sure to use the same keys below url , username , password 
+In your application.proprties make sure to use the same keys below **url** , **username** , **password** .
 
 
 
@@ -59,23 +59,49 @@ url= your database url
 username= your  database username
 password= your database password  
 
-  ```
   
 ## Usage  
   ### Annotating classes  
   All classes which represent objects in database must be annotated.
-   - #### @Table(name = "table_name)  
+   - #### @Entity(tableName="table_name")
       - Indicates that this class is associated with table 'table_name'  
-   - #### @Column(name = "column_name)  
-      - Indicates that the Annotated field is a column in the table with the name 'column_name'  
-   - #### @Setter(name = "column_name")  
-      - Indicates that the anotated method is a setter for 'column_name'.  
-   - #### @Getter(name = "column_name")  
-      - Indicates that the anotated method is a getter for 'column_name'.  
-   - #### @PrimaryKey(name = "column_name") 
+      - Each mapped class must should have @Entity annotation .
+
+   ### @ConstructorProperties(value = { "person_id",  "person" , "age" , "doors",  "valid" }) (imported from java.beans package )
+      - Developer can have multiple constructor in a  class. but must have one constructor annotated with  @ConstructorProperties
+      - Pass the column_name associted with each parameter into value attribute.
+      - This contructor will be use to create an instance of this class at runtime (When retiriving data from the database). 
+
+   - #### 	@Id(columnName="name_id")
       - Indicates that the annotated field is the primary key for the table.
-   - #### @SerialKey(name = "column_name") 
-      - Indicates that the annotated field is a serial key.
+      - Each mapped class must should have a @Id field representing the primary key of the table.
+
+
+   - #### @Column(columnName="person", dataType ="varchar(50)", defaultValue = " 'blue' " , 	unique = true , check = "condition" ,  refrences = "table_name(column_name)" , nullable = true)
+      - Column annotation has six attributes representing the constraints of the column 
+      -**columnName**  -> name of the column.
+      -**dataType**     -> defines what value this column can hold ex: varchar(50), INTEGER , NUMERIC ...
+      -**defaultValue**-> optional , set the default value of a column if no value provided (if the value is string add 'value'). 
+      -**unique** -> optional by default is set to false , don't allow duplicate value.
+      -**nullabe** ->  optional by default is set to true. if you set it to false, it won't allow null value.
+      -**check** ->optional ,  allow values that meet the condition into the column ex:   CHECK (salary>=15)
+      -**refrences** -> to create a foreign key that refrence to a column in another table ex: refrences = "table_name(column_name)" .
+    
+
+    -#### @ForeignKey(columnName = "person", joinedColumn = "person_id", joinedTable = "persons")
+      - Add this annotation the column that refrences column in another table.
+      - This annotation has 3 attributes.
+      -**columnName** -> the name of this column should be exactly the same as the one used in @Column(columnName="same name").
+      -**joinedColumn**->  the name of the column that foreign key depends on,  must be the same used in @@Column(refrences = "table_name(**same_column_name**)").
+      -**joinedTable** ->  the name of the table that foreign key refrencing to. must be the same used in @@Column(refrences = "**same_table_name**(column_name)"). 
+      -Use this annotation to enable the use of Join Queries (simple or multiple join like many to many relationship )
+
+
+
+      
+
+
+  
 
   ### User API  
   
