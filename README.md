@@ -228,7 +228,7 @@ public class Car {
      - returns the singleton instance of the class. and create a connetion pool to the data base. 
 
      ####  `public boolean addMappedClass(Class<?>... clazzs) `
-     -  Create tables of classes passed in the database.
+     -  Create tables of classes passed as args into the database.
 
    - ###  DDL
      -    Class used to execute Data definition language statements CREATE , ALTER , TRUNCATE , DROP.
@@ -264,8 +264,78 @@ public class Car {
 
       - This method is used to delete an existing table.
 
-      
-       
+      ### DML
+      -   DML provide methods to execute data manipulation statement against the database
+	   - All operations against the database using this class are auto committed.
+
+      - #### `public 	List<Object> insert(Object... objs) `
+      - This method will map the objects passed in insert their data into their table.
+      - Objects passed in this method should be annotated with @Entity and the should all be from the same class.
+
+      - #### 	`public int delete(Class<?> clazz ,int id)`
+      - This method delete the row with primary key equal to id. 
+
+      -  Returns the id of the row deleted or 0 if the id passed does not exists in the database 
+
+      - #### `List<Object>  delete(Class<?> clazz , String condition)`
+
+      - Delete all rows that meet the condition passed.
+      - Return a list of the primary key of rows that been deleted  
+
+
+      - #### `public Object update(Class<?> clazz, String statement  ,int id )`
+
+      - This method update the row with primary key equal to id. 
+      -  Return an object representing the row updated in the database.
+ 
+      - ####  `public List<Object> update(Class<?> clazz , String statement , String  condition )`
+
+      - Update all rows that meet the condition passed.
+      - Return a list of objects representing the rows updated in the database.
+
+
+
+
+
+      ````java
+
+          import com.revature.SQL.DML;
+
+         Car bmw = new Car(2, "bmw", "blue" );
+
+		   Car renault = new Car(4, "renault", "red");
+
+         	DML	dml = new DML();
+		
+		try {
+			List<Object> listInserted =	dml.insert(bmw, renault);
+			
+			int deleted = dml.delete(Car.class, 2);
+			
+			List<Object> deletedRows = dml.delete(Car.class, "WHERE color = 'red ");
+			
+			Object updated = dml.update(Car.class, "color = 'green' ", 1);
+			
+			List<Object> updatedRows = dml.update(Car.class,  "color = 'green' " , "WHERE color = 'blue' ");
+         
+		} catch (IllegalArgumentException e1) {
+			
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+	
+			e1.printStackTrace();
+		} catch (SQLException e1) {
+		
+			e1.printStackTrace();
+		}
+
+
+
+
+      ````
+
+
+
 
 
   - #### `public HashMap<Class<?>, HashSet<Object>> getCache()`  
