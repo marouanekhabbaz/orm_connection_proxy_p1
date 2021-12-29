@@ -293,10 +293,6 @@ public class Car {
       - Update all rows that meet the condition passed.
       - Return a list of objects representing the rows updated in the database.
 
-
-
-
-
       ````java
 
       import com.revature.SQL.DML;
@@ -329,11 +325,85 @@ public class Car {
 			e1.printStackTrace();
 		}
 
-
-
-
       ````
 
+ ###  Transaction
+   *  Transaction provide methods to execute data manipulation statement against the database and gives the developer control to manage the transaction (commit , rollback ...)
+ *  All operations against the database using this class are not committed and need to invoke .commit() method to persist change.
+
+   - ####	`public void commit()`
+   - Made change persistent  
+
+   - #### `public Savepoint setSavePoint(String name)`
+   -  To create a save point to rollback to it later down the road 
+
+   - #### `public void rollBack(Savepoint savePoint)`
+   - Cancel all change made to the database after creating a savepoint.
+
+   - #### `public void rollBack()`
+   -  Cancel all change made to the database since the last commit.
+
+   - ####  `public void end()`
+   - End the transaction and free the connection thread used for this transaction. 
+   - #### `public 	List<Object> insert(Object... objs) `
+   - Change is not committed automatically, need to invoke .commit() to persist the change. 
+   - This method will map the objects passed in insert their data into their table.
+   - Objects passed in this method should be annotated with @Entity and the should all be from the same class.
+
+     #### 	`public int delete(Class<?> clazz ,int id)`
+     - Change is not committed automatically, need to invoke .commit() to persist the change. 
+      This method delete the row with primary key equal to id. 
+
+   -  Returns the id of the row deleted or 0 if the id passed does not exists in the database 
+
+- #### `List<Object>  delete(Class<?> clazz , String condition)`
+- Change is not committed automatically, need to invoke .commit() to persist the change. 
+
+- Delete all rows that meet the condition passed.
+- Return a list of the primary key of rows that been deleted  
+
+- #### `public Object update(Class<?> clazz, String statement  ,int id )`
+- Change is not committed automatically, need to invoke .commit() to persist the change. 
+- This method update the row with primary key equal to id. 
+-  Return an object representing the row updated in the database.
+ 
+- ####  `public List<Object> update(Class<?> clazz , String statement , String  condition )`
+- Change is not committed automatically, need to invoke .commit() to persist the change  
+- Update all rows that meet the condition passed.
+- Return a list of objects representing the rows updated in the database.
+  
+      
+````java
+import com.revature.SQL.Transaction;
+
+Transaction transaction = new Transaction();
+
+Car bmw = new Car(2, "bmw", "blue" );
+      
+Car renault = new Car(4, "renault", "red");
+
+		
+		try {
+			transaction.insert(bmw, renault);
+			transaction.commit();
+			transaction.insert(bmw, renault);
+			Savepoint save =	transaction.setSavePoint("savepoint");
+			transaction.delete(Car.class, 1);
+			transaction.rollBack(save);
+			transaction.commit();
+			transaction.end();
+		} catch (IllegalArgumentException e1) {
+			
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+		
+			e1.printStackTrace();
+		} catch (SQLException e1) {
+			
+			e1.printStackTrace();
+		}
+
+````
 
 
 
