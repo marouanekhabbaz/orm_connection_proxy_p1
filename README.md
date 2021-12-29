@@ -59,25 +59,32 @@ url= your database url
 username= your  database username
 password= your database password  
 
-  
+ ``` 
+
 ## Usage  
   ### Annotating classes  
   All classes which represent objects in database must be annotated.
+
+
    - #### @Entity(tableName="table_name")
+
       - Indicates that this class is associated with table 'table_name'  
       - Each mapped class must should have @Entity annotation .
 
    ### @ConstructorProperties(value = { "person_id",  "person" , "age" , "doors",  "valid" }) (imported from java.beans package )
+
       - Developer can have multiple constructor in a  class. but must have one constructor annotated with  @ConstructorProperties
       - Pass the column_name associted with each parameter into value attribute.
       - This contructor will be use to create an instance of this class at runtime (When retiriving data from the database). 
 
    - #### 	@Id(columnName="name_id")
+
       - Indicates that the annotated field is the primary key for the table.
       - Each mapped class must should have a @Id field representing the primary key of the table.
 
 
    - #### @Column(columnName="person", dataType ="varchar(50)", defaultValue = " 'blue' " , 	unique = true , check = "condition" ,  refrences = "table_name(column_name)" , nullable = true)
+
       - Column annotation has six attributes representing the constraints of the column 
       -**columnName**  -> name of the column.
       -**dataType**     -> defines what value this column can hold ex: varchar(50), INTEGER , NUMERIC ...
@@ -88,7 +95,8 @@ password= your database password
       -**refrences** -> to create a foreign key that refrence to a column in another table ex: refrences = "table_name(column_name)" .
     
 
-    -#### @ForeignKey(columnName = "person", joinedColumn = "person_id", joinedTable = "persons")
+    #### @ForeignKey(columnName = "person", joinedColumn = "person_id", joinedTable = "persons")
+    
       - Add this annotation the column that refrences column in another table.
       - This annotation has 3 attributes.
       -**columnName** -> the name of this column should be exactly the same as the one used in @Column(columnName="same name").
@@ -98,7 +106,7 @@ password= your database password
 
 
 
-      
+
 
 
   
