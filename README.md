@@ -299,15 +299,15 @@ public class Car {
 
       ````java
 
-          import com.revature.SQL.DML;
+      import com.revature.SQL.DML;
 
-         Car bmw = new Car(2, "bmw", "blue" );
+      Car bmw = new Car(2, "bmw", "blue" );
+      
+      Car renault = new Car(4, "renault", "red");
 
-		   Car renault = new Car(4, "renault", "red");
-
-         	DML	dml = new DML();
+      DML	dml = new DML();
 		
-		try {
+	   try {
 			List<Object> listInserted =	dml.insert(bmw, renault);
 			
 			int deleted = dml.delete(Car.class, 2);
@@ -317,7 +317,7 @@ public class Car {
 			Object updated = dml.update(Car.class, "color = 'green' ", 1);
 			
 			List<Object> updatedRows = dml.update(Car.class,  "color = 'green' " , "WHERE color = 'blue' ");
-         
+
 		} catch (IllegalArgumentException e1) {
 			
 			e1.printStackTrace();
