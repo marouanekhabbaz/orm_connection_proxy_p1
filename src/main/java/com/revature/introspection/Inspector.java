@@ -176,15 +176,11 @@ public class Inspector<T> { // we're inferring that the MetaModel class can only
 		for (Field field : fields) {
 			
 			if (field.getAnnotation(ForeignKey.class)  != null) {
-				System.out.println("here");
+				
 				ForeignKeyField	foreignKey = new 	ForeignKeyField(field);
 				String foreignKeyOfJoinedColumn = foreignKey.getJoinedColumn();
 				String joindColumn = getColumnUsingColumnName(clazzB ,foreignKeyOfJoinedColumn);
-				
-				System.out.println(foreignKeyOfJoinedColumn  );
-				System.out.println(joindColumn);
-				
-				
+	
 				
 			if(foreignKeyOfJoinedColumn.equals(joindColumn)) {
 				return foreignKey ;

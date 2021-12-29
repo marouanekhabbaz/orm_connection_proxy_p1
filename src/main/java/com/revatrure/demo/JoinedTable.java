@@ -3,6 +3,7 @@ package com.revatrure.demo;
 import com.revature.annontation.Column;
 import com.revature.annontation.Entity;
 import com.revature.annontation.ForeignKey;
+import com.revature.annontation.Id;
 import com.revature.annontation.JoinedColumn;
 
 
@@ -10,14 +11,26 @@ import com.revature.annontation.JoinedColumn;
 public class JoinedTable {
 	
 	
-	@ForeignKey(columnName = "car_id", joinedColumn = "car_id", joinedTable = "cars")
-	@Column(columnName = "car_id", dataType = "INTEGER" , refrences = "cars(car_id)")
+	
+	public JoinedTable(int carId, int personId) {
+		super();
+		this.carId = carId;
+		this.personId = personId;
+	}
+
+
+
+	@Id(columnName = "id")
+	int id;
+	
+	@ForeignKey(columnName = "car", joinedColumn = "car_id", joinedTable = "cars")
+	@Column(columnName = "car", dataType = "INTEGER" , refrences = "cars(car_id)")
 	int carId;
 	
 	
 	
-	@ForeignKey(columnName = "person_id", joinedColumn = "person_id", joinedTable = "persons")
-	@Column(columnName = "person_id", dataType = "INTEGER",  refrences = "persons(person_id)")
+	@ForeignKey(columnName = "person", joinedColumn = "person_id", joinedTable = "persons")
+	@Column(columnName = "person", dataType = "INTEGER",  refrences = "persons(person_id)")
 	int personId;
 	
 	

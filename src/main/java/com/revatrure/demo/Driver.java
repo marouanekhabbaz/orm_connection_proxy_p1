@@ -32,6 +32,12 @@ public class Driver {
 		Car bmw = new Car(1, "bmw", "blue" );
 		Car renault = new Car(2, "renault", "red");
 		Person p = new Person(0, "marouane", "pass", 0, false);
+		
+		JoinedTable j43 = new JoinedTable(2, 2);
+		JoinedTable j1 = new JoinedTable(1, 1);
+		JoinedTable j2= new JoinedTable(3, 3);
+		JoinedTable j3 = new JoinedTable(4, 4);
+		
 		DDL d = new DDL();
 		
 		DML dml = new DML();
@@ -43,7 +49,14 @@ public class Driver {
 	//	Transaction t = new Transaction();
 		
 		try {
-	LinkedList<HashMap<String, Object>> rows	=	dql.joinQuerry(Car.class, Person.class);
+			
+//		d.create(JoinedTable.class);
+//	
+//		dml.insert(j43, j1, j2 , j3);
+//			
+//	LinkedList<HashMap<String, Object>> rows	=	dql.joinQuerry(Car.class, Person.class , "color = 'red' ");
+	
+	 dql.joinQuerryManyToMany(JoinedTable.class, Car.class, Person.class , "a.color ='blue' ");
 	
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

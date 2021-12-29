@@ -98,8 +98,7 @@ public class DDL {
 			try( Connection conn = connPool.getConnection()  ;
 				Statement stmt = conn.createStatement();) 	
 			{
-				// IF NOT EXISTS  
-				String  sql = "CREATE TABLE "  + inspector.getTableName() + " (\r\n"
+				String  sql = "CREATE TABLE  IF NOT EXISTS "  + inspector.getTableName() + " (\r\n"
 						+ id.getColumnName() + " SERIAL PRIMARY KEY,\r\n";
 						
 				for(int i=0 ; i< columns.size(); i++) {		
