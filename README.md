@@ -17,17 +17,26 @@ It also provides classes and methods that simplify the definition, manipulation,
 ## Features
 
 * OCP handles the mapping of Java classes to database tables using a simple method without the need for complex configuration files.
-* Provides simple APIs for storing and retrieving Java objects directly to and from the database.
-* Easy to use and straightforward user API to store, retrieve or manipulate data using a Java class or object and OCP will handle the persistence of that into the database.  
-* Little to no SQL, or any database-specific language, But it does provide API to write and execute native SQL statements to the database.
-* OCP gives the developer 100% control over defining constraints for each column in the table such as  ( data type, Unique, primary key,    references, check, default, not null.. ) 
-* Provide transaction functionality like commit, save point, and rollback. 
-* Straightforward and simple Annotation-based for ease of use. 
-* Mapping of join columns inside of entities. 
-* All methods of DQL class returns each row from the result as a hashmap with the column name as the key, and the value is the value of that column in the table, this very similar to JSON, and make the retrieval and manipulation of the data much easier than working with ResultSet.  
-* OCP uses connection pooling.  
-* All SQL statements executed against the database are printed to the console for easier debugging.
 
+* Provides simple APIs for storing and retrieving Java objects directly to and from the database.
+
+* Easy to use and straightforward user API to store, retrieve or manipulate data using a Java class or object and OCP will handle the persistence of that into the database.  
+
+* Little to no SQL, or any database-specific language, But it does provide API to write and execute native SQL statements to the database.
+
+* OCP gives the developer 100% control over defining constraints for each column in the table such as  ( data type, Unique, primary key,    references, check, default, not null.. ) 
+
+* Provide transaction functionality like commit, save point, and rollback. 
+
+* Straightforward and simple Annotation-based for ease of use. 
+
+* Mapping of join columns inside of entities. 
+
+* All methods of DQL class returns each row from the result as a hashmap with the column name as the key, and the value is the value of that column in the table, this very similar to JSON, and make the retrieval and manipulation of the data much easier than working with ResultSet.  
+
+* OCP uses connection pooling.  
+
+* All SQL statements executed against the database are printed to the console for easier debugging.
 
 
 
@@ -54,7 +63,7 @@ In your application.proprties make sure to use the same keys below **url** , **u
 
 
 
- ``` 
+ ```
 url= your database url
 username= your  database username
 password= your database password  
@@ -136,15 +145,129 @@ password= your database password
 
 
 
+   ###  Connect to database and create tables : 
+
+   1. Create an Entity class : 
 
 
+   ````java
+
+import java.beans.ConstructorProperties;
+import com.revature.annontation.Column;
+import com.revature.annontation.Entity;
+import com.revature.annontation.ForeignKey;
+import com.revature.annontation.Id;
+
+
+@Entity(tableName="cars")
+public class Car {
+
+	@Id(columnName="car_id")
+	private int id;
+	
+	@Column(columnName="car_model", dataType ="varchar(50)")
+	private String model;
+	
+	@Column(columnName="color", dataType = "varchar(50)", nullable = false ,  defaultValue = " 'blue' ")
+	private String color;
+	
+	@Column(columnName = "doors", dataType = "INTEGER", defaultValue= "4")
+	private int doors ;
+	
+	@ForeignKey(columnName = "forignKey", joinedColumn = "person_id" , joinedTable = "persons")
+	@Column(columnName="forignKey", dataType = "INTEGER" , refrences = "persons(person_id)")
+	private String owner;
+	
+	public String otherField1;
+	
+	public String  otherField12 ;
+	
+	public Car() {
+	
+	}
+	
+
+	@ConstructorProperties(value = { "car_id",  "car_model" , "color" })
+	public Car(int id, String firstName, String color) {
+		super();
+		this.id = id;
+		this.model = firstName;
+		this.color = color;
+	}
+}
+
+   ````
+
+2. Connect to the database 
+
+````java
+
+   import com.revature.util.DataBase;
+
+   DataBase db = new DataBase().getConnection();
+		
+
+````
+
+3. Create Entity class in database (make sure database dont have a table with the same name sql used is CREATE TABLE  IF NOT EXISTS.. )
+
+````java
+      /*
+      * Using varagrs you can as many class as you need 
+      */
+   db.addMappedClass( Person.class , Car.class , ... );
+
+````
 
   
 
-  ### User API  
+  ## User API  
   
-  - #### `public static Something getInstance()`  
-     - returns the singleton instance of the class. It is the starting point to calling any of the below methods.  
+  - ### DataBase :
+      #### `public DataBase getConnection()`   
+     - returns the singleton instance of the class. and create a connetion pool to the data base. 
+
+     ####  `public boolean addMappedClass(Class<?>... clazzs) `
+     -  Create tables of classes passed in the database.
+
+   - ###  DDL
+     -    Class used to execute Data definition language statements CREATE , ALTER , TRUNCATE , DROP.
+
+     - #### public boolean create(Class<?> clazz)
+     -   Create a table of the class passed into the database.
+
+     - #### `public boolean alter(Class<?> clazz , String change)`
+
+      - This method is used to modify , delete , add a column in an existing table also to add or drop or modify  a constraint of an existing column.
+
+      ````java 
+      import com.revature.SQL.DDL;
+
+      	DDL ddl = new DDL();
+
+		
+		try {
+			ddl.alter(Car.class, " ADD Email varchar(50) ");
+		} catch (DdlException e) {
+		
+			e.printStackTrace();
+		}
+
+
+      ```` 
+
+      - #### `public boolean truncate(Class<?> clazz)`
+
+      - This method is used to delete every rows in an existing table 
+
+      - #### 	`public boolean drop(Class<?> clazz)`
+
+      - This method is used to delete an existing table.
+
+      
+       
+
+
   - #### `public HashMap<Class<?>, HashSet<Object>> getCache()`  
      - returns the cache as a HashMap.  
   - #### `public boolean addClass(final Class<?> clazz)`  
