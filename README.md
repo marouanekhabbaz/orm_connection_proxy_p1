@@ -230,6 +230,13 @@ public class Car {
      ####  `public boolean addMappedClass(Class<?>... clazzs) `
      -  Create tables of classes passed as args into the database.
 
+     #### `	public void addTableToCach (Class<?> clazz)`
+      - Add the table from database to the cache.
+
+      #### `public void addNewCach(String cachName , Object obj) `
+      - Name of the cache.
+	   - Could be anything example when you retrieve something from the database
+
    - ###  DDL
      -    Class used to execute Data definition language statements CREATE , ALTER , TRUNCATE , DROP.
 

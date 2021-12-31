@@ -8,13 +8,17 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 
+import com.revatrure.demo.Car;
+import com.revatrure.demo.Person;
 import com.revature.SQL.DDL;
+import com.revature.SQL.DQL;
 import com.revature.exception.DdlException;
 import com.revature.introspection.Inspector;
 
@@ -28,6 +32,8 @@ import com.revature.introspection.Inspector;
 public class DataBase {
 	
 	public static BasicDataSource connPool = null;
+	
+	public static HashMap<String, Object> cache = new HashMap<>();
 	
 
 	/**
@@ -110,61 +116,36 @@ public class DataBase {
 			
 		}
 
-	
-	 
-	 
-	
-	
-	// return a Connection object OR call on a separate class like Connection Util
-	 
-	 /*
-	public DataBase getConnection() {
+	 /**
+	  * 
+	  * @param clazz
+	  * 
+	  * add the table from database to the cache.
+	  */
+
+	public void addTableToCach (Class<?> clazz) {
+		Inspector<?> inspector = Inspector.of(clazz);
 		
+		DQL dql = new DQL();
+		
+		LinkedList<Object> result;
 		try {
-			if(conn != null && !conn.isClosed()) {
-				
-			}
-			}catch (SQLException e) {
-				
-				e.printStackTrace();
-				return null;
-				// TODO: handle exception
-			}
-			
-			// this class is instantiated to read from a properties file 
-			Properties prop = new Properties(); // imported from java.util
-			
-			String url = "";
-			String username = "";
-			String password = "";
-			
-			
-			try {
-				String path = new File("src\\\\main\\\\resources\\\\application.properties").getAbsolutePath();
-				prop.load(new FileReader(path));
-				
-				url = prop.getProperty("url"); // this is retrieving the value of the "url" key in application.properties file
-				username =  prop.getProperty("username");
-				password = prop.getProperty("password");
-				
-				
-				 conn = DriverManager.getConnection(url, username, password );
-				 System.out.println("Connection established successfully");
-				 
-				 
+			result = dql.getAll(clazz);
+			cache.put(inspector.getTableName(), result );
+		} catch (SQLException e) {
 		
-			} catch (SQLException e) {
-		
-				System.out.println("Cannot establish DB connection");	
-				e.printStackTrace();
-			}catch (IOException e) {
-				e.printStackTrace();
-			}
-			return this;
-		
+			e.printStackTrace();
+		}
 	}
-
-
-*/
+	 
+	/**
+	 * 
+	 * @param cachName -> name of the cache.
+	 * @param obj -> could be anything example when you retrieve something from the database
+	 */
+	public void addNewCach(String cachName , Object obj) {
+		cache.put(cachName, obj);
+	}
+	 
 	 
 }
