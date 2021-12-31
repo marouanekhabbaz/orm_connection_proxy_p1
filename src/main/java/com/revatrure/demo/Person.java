@@ -8,10 +8,21 @@ import com.revature.annontation.Id;
 @Entity(tableName="persons")
 public class Person {
 	
+	/**
+	 * 	String columnName();
+	boolean unique() default false;
+	boolean nullable() default true ;
+	String dataType();
+	String defaultValue() default "" ;
+	String  check() default "";
+	String refrences() default ""; 
+	 */
+	
 	@Id(columnName="person_id") // this has been marked as a Primary Key
 	private int id;
 	
-	@Column(columnName="person", dataType ="varchar(50)", defaultValue = " 'blue' ")
+	@Column(columnName="person", dataType ="varchar(50)", defaultValue = " 'blue' " , 
+			unique = true , check = "condition" , refrences = "column(name)" , nullable = true)
 	private String model;
 	
 	@Column(columnName="age", dataType = "varchar(50)", nullable = false)

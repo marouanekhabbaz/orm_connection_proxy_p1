@@ -40,42 +40,41 @@ public class Driver {
 		
 		DDL d = new DDL();
 		
-		DML dml = new DML();
+		// DML dml = new DML();
 		
 		DQL  dql = new DQL();
 		
-//		Inspector<Car> i = new Inspector<Car>(Car.class);
+		DML	dml = new DML();
 		
-	//	Transaction t = new Transaction();
 		
 		try {
+			LinkedList<HashMap<String, Object>> result = dql.joinQuerry(Car.class, Person.class);
 			
-//		d.create(JoinedTable.class);
-//	
-//		dml.insert(j43, j1, j2 , j3);
-//			
-//	LinkedList<HashMap<String, Object>> rows	=	dql.joinQuerry(Car.class, Person.class , "color = 'red' ");
-	
-	 dql.joinQuerryManyToMany(JoinedTable.class, Car.class, Person.class , "a.color ='blue' ");
-	
-		} catch (SQLException e) {
+			System.out.println("=========================================");
+			LinkedList<HashMap<String, Object>> resultWithCondition = dql.joinQuerry(Car.class, Person.class, "color = 'red' ");
+			System.out.println("=========================================");
+			LinkedList<HashMap<String, Object>> resultForm3tables = dql.joinQuerryManyToMany( JoinedTable.class ,Car.class, Person.class);
+			System.out.println("=========================================");
+			LinkedList<HashMap<String, Object>> resultForm3tablesWithCondition = dql.joinQuerryManyToMany( JoinedTable.class ,Car.class, Person.class, "a.color ='red'");
+			
+		} catch (SQLException e2) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e2.printStackTrace();
 		}
 		
-		
-		
-		
-		
 //		try {
-//			t.insert(bmw, renault);
-////			t.commit();
-//			Savepoint x =	t.setSavePoint("marouane");
-//			t.insert(bmw, renault);
-//			t.rollBack(x);
-//			t.commit();
-//			t.end();
-//			System.out.println(t);
+//		
+//			List<Object> listInserted =	dml.insert(bmw, renault);
+//			
+//			int deleted = dml.delete(Car.class, 2);
+//			
+//			List<Object> deletedRows = dml.delete(Car.class, "WHERE color = 'red ");
+//			
+//			Object updated = dml.update(Car.class, "color = 'green' ", 1);
+//			
+//			List<Object> updatedRows = dml.update(Car.class,  "color = 'green' " , "WHERE color = 'blue' ");
+//			
+//			
 //		} catch (IllegalArgumentException e1) {
 //			// TODO Auto-generated catch block
 //			e1.printStackTrace();
@@ -86,7 +85,51 @@ public class Driver {
 //			// TODO Auto-generated catch block
 //			e1.printStackTrace();
 //		}
+		
+//		Inspector<Car> i = new Inspector<Car>(Car.class);
+		
+	//	Transaction t = new Transaction();
+		
+//		try {
+//			
+//		d.create(JoinedTable.class);
+//	
+//		dml.insert(j43, j1, j2 , j3);
+//			
+//	LinkedList<HashMap<String, Object>> rows	=	dql.joinQuerry(Car.class, Person.class , "color = 'red' ");
 	
+//	 dql.joinQuerryManyToMany(JoinedTable.class, Car.class, Person.class , "a.color ='blue' ");
+//	
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		
+		
+		
+//		Transaction transaction = new Transaction();
+//		
+//		try {
+//			transaction.insert(bmw, renault);
+//			transaction.commit();
+//			transaction.insert(bmw, renault);
+//			Savepoint save =	transaction.setSavePoint("savepoint");
+//			transaction.delete(Car.class, 1);
+//			transaction.rollBack(save);
+//			transaction.commit();
+//			transaction.end();
+//		} catch (IllegalArgumentException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} catch (IllegalAccessException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} catch (SQLException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//	
 		
 //		try {
 	//	d.(Car.class, Person.class);
@@ -172,14 +215,16 @@ public class Driver {
 //	e.printStackTrace();
 //}
 		
-		
-		
+//		DDL ddl = new DDL();
+//		
 //		try {
-//			System.out.println(d.alter(Car.class, " ADD Email varchar(255) "));
+//			ddl.alter(Car.class, " ADD Email varchar(255) ");
 //		} catch (DdlException e) {
-//			// TODO Auto-generated catch block
+//			
 //			e.printStackTrace();
 //		}
+//		
+		
 //		
 //		try {
 //			 System.out.println(d.drop(Car.class));

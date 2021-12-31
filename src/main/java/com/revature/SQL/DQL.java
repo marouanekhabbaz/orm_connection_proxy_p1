@@ -24,6 +24,8 @@ import com.revature.util.DataBase;
  * 
  * @author marouanekhabbaz
  * 
+ * -
+ * 
  * - get(Class<?> clazz, int id)
  *	 	- clazz -> class annotated with @Entity and have a Constructor annotated with @ConstructorProperties
  *   	- id -> represent the primary key 
@@ -247,7 +249,7 @@ public class DQL {
 	 * 
 	 * @param clazzA -> first class -> has the a foreign key referencing to the primary key of the second class
 	 * @param clazzB -> second class -> has a primary key that is used as foreign key in clazzA
-	 *  @return -> LinkedList of Hashmaps representing each row returned in the result
+	 * @return -> LinkedList of Hashmaps representing each row returned in the result
 	 * 			- The hashmap has key = column_name , value = the value of that column in each row 
 	 * @throws SQLException
 	 * 

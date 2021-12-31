@@ -1,4 +1,4 @@
-# orm connection proxy OCP
+# ORM Connection Proxy OCP
 
 
 ## Project Description
@@ -405,46 +405,81 @@ Car renault = new Car(4, "renault", "red");
 
 ````
 
+- ### DQL
+
+
+- #### `public Object get(Class<?> clazz, int id)`
+- Return an instance of the class passed , instantiated using the constructor annotated with  `@ConstructorProperties`.
+
+- #### `public LinkedList<Object> getAll(Class<?> clazz ) `
+- Return a linkedList of object of all rows inside the table in database, the objects returned are instantiated using the constructor annotated with  `@ConstructorProperties`.
+
+- #### `public LinkedList<Object> getWhere(Class<?> clazz , String condition )`
+- Return a linkedList of object of all rows inside the table in database that meet the condition passed as args, the objects returned are instantiated using the constructor annotated with  `@ConstructorProperties`.
+
+- #### `public LinkedList<HashMap<String, Object>> nativeQuerry( String querry ) `
+- Return a linkedList of Hashmaps representing each row returned in the result.
+
+
+- #### 	`public LinkedList<HashMap<String, Object>> joinQuerry( Class<?> clazzA , Class<?> clazzB ) `
+
+	 * clazzA -> first class -> has the a foreign key referencing to the primary key of the second class.
+	 * clazzB -> second class -> has a primary key that is used as foreign key in clazzA.
+	 * Return linkedList of Hashmaps representing each row returned in the result.
+	 * The hashmap has key = column_name , value = the value of that column in each row. 
+- #### `	public LinkedList<HashMap<String, Object>> joinQuerry( Class<?> clazzA , Class<?> clazzB , String condition )`
+	 * Return linkedList of Hashmaps representing each row returned in  both tables that meet the condition.
+
+- #### 	`public LinkedList<HashMap<String, Object>> joinQuerryManyToMany(Class<?> jointClazz ,Class<?> clazzA , Class<?> clazzB )` 
+   - This method is used to write a join query with three table, In case you have a joint table that has foreign key refrenecing to columns in table A and in table B.
+   - Return linkedList of Hashmaps representing each row returned in the result.   
+
+
+- #### 	`public LinkedList<HashMap<String, Object>> joinQuerryManyToMany(Class<?> jointClazz ,Class<?> clazzA , Class<?> clazzB , String condition )` 
+
+ - This method is used to write a join query with three table, In case you have a joint table that has foreign key refrenecing to columns in table A and in table B.
+   - Return linkedList of Hashmaps representing each row returned in the result that meet the condition passed.
+
+   ````java
+
+
+	DQL  dql = new DQL();
+		
+		try {
+			LinkedList<HashMap<String, Object>> result = dql.joinQuerry(Car.class, Person.class);
+			
+		
+			LinkedList<HashMap<String, Object>> resultWithCondition = dql.joinQuerry(Car.class, Person.class, "color = 'red' ");
+			
+			LinkedList<HashMap<String, Object>> resultForm3tables = dql.joinQuerryManyToMany( JoinedTable.class ,Car.class, Person.class);
+		
+         /*
+         param1 -> refer to as j in SQL statement if you want to add condition make sure to refer to it as j.name , j.age ...
+         param2 -> refer to as a in SQL statement if you want to add condition make sure to refere to it as a.name , a.age ...
+
+         param3 -> refer to as b in SQL statement if you want to add condition make sure to refer to it as b.name , b.age ...
+
+         */
+			LinkedList<HashMap<String, Object>> resultForm3tablesWithCondition = dql.joinQuerryManyToMany( JoinedTable.class ,Car.class, Person.class, "a.color ='red'");
+			
+		} catch (SQLException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
+
+
+   ````  
+  
 
 
 
-  - #### `public HashMap<Class<?>, HashSet<Object>> getCache()`  
-     - returns the cache as a HashMap.  
-  - #### `public boolean addClass(final Class<?> clazz)`  
-     - Adds a class to the ORM. This is the method to use to declare a Class is an object inside of the database.  
-  - #### `public boolean UpdateObjectInDB(final Object obj,final String update_columns)`  
-     - Updates the given object in the databse. Update columns is a comma seperated lsit fo all columns in the onject which need to be updated  
-  - #### `public boolean removeObjectFromDB(final Object obj)`  
-     - Removes the given object from the database.  
-  - #### `public boolean addObjectToDB(final Object obj)`  
-     - Adds the given object to the database.  
-  - #### `public Optional<List<Object>> getListObjectFromDB(final Class <?> clazz, final String columns, final String conditions)`  
-  - #### `public Optional<List<Object>> getListObjectFromDB(final Class <?> clazz, final String columns, final String conditions,final String operators)`  
-  - #### `public Optional<List<Object>> getListObjectFromDB(final Class<?> clazz)`  
-     - Gets a list of all objects in the database which match the included search criteria  
-        - columns - comma seperated list of columns to search by.  
-        - conditions - coma seperated list the values the columns should match to.  
-        - operators - comma seperated list of operators to apply to columns (AND/OR) in order that they should be applied.  
-  - #### `public void beginCommit()`  
-     - begin databse commit.  
-  - #### `public void Rollback()`  
-     - Rollback to previous commit.  
-  - #### `public void Rollback(final String name)`  
-     - Rollback to previous commit with given name.  
-  - #### `public void setSavepoint(final String name)`  
-     - Set a savepoint with the given name.  
-  - #### `public void ReleaseSavepoint(final String name)`  
-     - Release the savepoint with the given name.  
-  - #### `public void enableAutoCommit()`  
-     - Enable auto commits on the database.  
-  - #### `public void setTransaction()`  
-     - Start a transaction block.  
-  - #### `public void addAllFromDBToCache(final Class<?> clazz)`  
-     - Adds all objects currently in the databse of the given clas type to the cache.  
+
+ 
 
 
 
 ## License
 
 This project uses the following license: [GNU Public License 3.0](https://www.gnu.org/licenses/gpl-3.0.en.html).
-# orm_connection_proxy_p1
+# ORM Connection Proxy OCP

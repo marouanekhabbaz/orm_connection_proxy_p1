@@ -13,7 +13,7 @@ import com.revature.annontation.Id;
 @Entity(tableName="cars")
 public class Car {
 
-	@Id(columnName="car_id") // this has been marked as a Primary Key
+	@Id(columnName="car_id")
 	private int id;
 	
 	@Column(columnName="car_model", dataType ="varchar(50)", defaultValue = " 'blue' ")
