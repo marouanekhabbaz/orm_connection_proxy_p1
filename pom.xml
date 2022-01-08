@@ -9,12 +9,12 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		
+
 		<sonar.organization>marouanekhabbaz</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-			
+
 	</properties>
-	
+
 
 	<dependencies>
 
@@ -42,6 +42,24 @@
 			<version>42.2.23</version>
 		</dependency>
 
+
+		<dependency> <!-- Log4j Dependency -->
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.25</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.25</version>
+		</dependency>
 
 
 	</dependencies>

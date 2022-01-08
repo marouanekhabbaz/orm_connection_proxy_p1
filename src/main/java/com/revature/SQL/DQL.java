@@ -14,6 +14,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.revature.introspection.ColumnField;
 import com.revature.introspection.ForeignKeyField;
@@ -49,10 +51,12 @@ import com.revature.util.DataBase;
 
 public class DQL {
 	BasicDataSource connPool = DataBase.connPool;
+	private static final Logger log = LoggerFactory.getLogger(DQL.class);
 	
 	
 	/**
 	 * 
+	 * @param <T>
 	 * @param clazz -> class annotated with @Entity and have a Constructor annotated with @ConstructorProperties
 	 * @param id -> represent the primary key 
 	 * @return -> an instance of the class passed , instantiated using the constructor annotated with  @ConstructorProperties
@@ -60,17 +64,17 @@ public class DQL {
 	 */
 	
 	
-	public Object get(Class<?> clazz, int id) throws SQLException{
+	public <T> T get(Class<T> clazz, int id) throws SQLException{
 		Inspector<Class<?>> inspector = Inspector.of(clazz);
 		Constructor constructor = inspector.findAnnotatedConstructor(clazz);
 		
 		String sql = "SELECT * FROM " + inspector.getTableName() + " WHERE " + inspector.getPrimaryKey().getColumnName() 
 				+" =  " + id ;
+		log.info(sql);
 		
-		System.out.println(sql);
 		
 		String[]  columns = ((ConstructorProperties) constructor.getAnnotation(ConstructorProperties.class)).value();  
-
+		
 		try
 		(Connection conn = connPool.getConnection()  ;
 		Statement stmt = conn.createStatement();
@@ -83,15 +87,17 @@ public class DQL {
 			for(String column: columns) {
 				args.add(rs.getObject(column));
 			}
-	
-		return 	constructor.newInstance(args.toArray());
+		log.info("Returning results for " + id);
+		return 	(T) constructor.newInstance(args.toArray());
 			
 		}else {
-			System.out.println("No result found ");
+			log.warn("No result found ");
+			
 			return null;
 		}	
 	} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 		// TODO Auto-generated catch block
+		log.info("An SQL exception has been thrown while searching for  " +id + " from " + inspector.getTableName() + " check the stack trace to debug");
 		e.printStackTrace();
 	}
 		return null;
@@ -102,19 +108,19 @@ public class DQL {
 	
 	/**
 	 * 
+	 * @param <T>
 	 * @param clazz -> class annotated with @Entity and have a Constructor annotated with @ConstructorProperties
 	 * @return -> A linkedList of object of all rows inside the table in database
 	 * @throws SQLException
 	 * 
 	 */
 	
-	public LinkedList<Object> getAll(Class<?> clazz ) throws SQLException{
+	public <T> LinkedList<T> getAll(Class<T> clazz ) throws SQLException{
 		Inspector<Class<?>> inspector = Inspector.of(clazz);
 		Constructor constructor = inspector.findAnnotatedConstructor(clazz);
 		LinkedList<Object> resultList = new LinkedList<>();
 		String sql = "SELECT * FROM " + inspector.getTableName() ;
-		
-		System.out.println(sql);
+		log.info(sql);
 		
 		String[]  columns = ((ConstructorProperties) constructor.getAnnotation(ConstructorProperties.class)).value();  
 
@@ -131,24 +137,27 @@ public class DQL {
 				args.add(rs.getObject(column));
 			}
 			
-		resultList.add(constructor.newInstance(args.toArray()));
+		resultList.add((T) constructor.newInstance(args.toArray()));
 			
-		}	
+		}
+		log.info("returning data from " + inspector.getTableName() );
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 		// TODO Auto-generated catch block
+			log.error("An SQL exception has been thrown while retriving data from  " + inspector.getTableName() + " check the stack trace to debug");
 		e.printStackTrace();
 	}
 		if(resultList.size()==0) {
-			System.out.println( inspector.getTableName() + " is empty ");
+			log.warn( inspector.getTableName() + " is empty ");
 		}
 		
-		return resultList;
+		return  (LinkedList<T>) resultList;
 		
 	}
 	
 	
 	/**
 	 * 
+	 * @param <T>
 	 * @param clazz -> class annotated with @Entity and have a Constructor annotated with @ConstructorProperties
 	 * @param condition -> custom condition example : you need to select all rows that color is green -->  column_color = 'green' 
 	 * 						In general the condition look like this =>  column_name = 'value' 
@@ -156,14 +165,14 @@ public class DQL {
 	 * @throws SQLException
 	 */
 	
-	public LinkedList<Object> getWhere(Class<?> clazz , String condition ) throws SQLException{
+	public <T> LinkedList<T> getWhere(Class<T> clazz , String condition ) throws SQLException{
 		Inspector<Class<?>> inspector = Inspector.of(clazz);
 		Constructor constructor = inspector.findAnnotatedConstructor(clazz);
-		LinkedList<Object> resultList = new LinkedList<>();
+		LinkedList<T> resultList = new LinkedList<>();
 		
 		String sql = "SELECT * FROM " + inspector.getTableName() + "  where " + condition ;
-		
-		System.out.println(sql);
+		log.info(sql);
+	
 		
 		String[]  columns = ((ConstructorProperties) constructor.getAnnotation(ConstructorProperties.class)).value();  
 
@@ -180,15 +189,17 @@ public class DQL {
 				args.add(rs.getObject(column));
 			}
 			
-		resultList.add(constructor.newInstance(args.toArray()));
-			
+		resultList.add((T) constructor.newInstance(args.toArray()));
+		log.info("returning data from " + inspector.getTableName() );
 		}	
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 		// TODO Auto-generated catch block
+		log.error("An SQL exception has been thrown while retriving data from  " + inspector.getTableName() + " check the stack trace to debug");
 		e.printStackTrace();
 	}
 		if(resultList.size()==0) {
-			System.out.println( inspector.getTableName() + " is empty ");
+			log.warn( inspector.getTableName() + " is empty ");
+			
 		}
 		
 		return resultList;
@@ -238,7 +249,9 @@ public class DQL {
 			 
 			 }
 		}
-		returnedRow.forEach(r-> System.out.println("row " + r));
+		log.info("result from this querry " + querry + " are :");
+		
+		returnedRow.forEach(r-> log.info("row " + r));
 		
 		}	
 		return  returnedRow;
@@ -272,8 +285,7 @@ public class DQL {
 				foreignKey.getJoinedColumn() 
 				
 			;
-		
-		System.out.println(sql);
+		log.info(sql);
 		
 		LinkedList <HashMap<String, Object>> returnedRow = new LinkedList<>();
 		try 
@@ -298,6 +310,8 @@ public class DQL {
 					row.put(column, rs.getObject(column));
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
+					log.error("An SQL exception has been thrown while excuting a join querry on  " + inspectorA.getTableName() + " and "
+						+ inspectorB.getTableName()  + " sql ==> "+ sql + " check the stack trace to debug");
 					e.printStackTrace();
 				}
 			} );
@@ -308,7 +322,7 @@ public class DQL {
 			 
 			 }
 		}
-		returnedRow.forEach(r-> System.out.println("row " + r));
+		returnedRow.forEach(r-> log.info("row " + r));
 		
 		}	
 		return  returnedRow;
@@ -342,8 +356,7 @@ public class DQL {
 				+ " WHERE " + condition ;
 				
 			;
-		
-		System.out.println(sql);
+		log.info(sql);
 		
 		LinkedList <HashMap<String, Object>> returnedRow = new LinkedList<>();
 		try 
@@ -368,6 +381,9 @@ public class DQL {
 					row.put(column, rs.getObject(column));
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
+					log.error("An SQL exception has been thrown while excuting a join querry on  " + inspectorA.getTableName() + " and "
+							+ inspectorB.getTableName()  + " sql ==> "+ sql + " check the stack trace to debug");
+					
 					e.printStackTrace();
 				}
 			} );
@@ -378,7 +394,7 @@ public class DQL {
 			 
 			 }
 		}
-		returnedRow.forEach(r-> System.out.println("row " + r));
+		returnedRow.forEach(r->log.info("row " + r));
 		
 		}	
 		return  returnedRow;
@@ -414,8 +430,7 @@ public class DQL {
 				+  "  On J." + foreignKeyOfB.getForeignKeyName()  + " = b." +
 				foreignKeyOfB.getJoinedColumn() 
 			;
-		
-		System.out.println(sql);
+		log.info(sql);
 		
 		LinkedList <HashMap<String, Object>> returnedRow = new LinkedList<>();
 		try 
@@ -441,6 +456,8 @@ public class DQL {
 					row.put(column, rs.getObject(column));
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
+					log.error("An SQL exception has been thrown while excuting a join querry on  " + inspectorA.getTableName() + " and "
+							+ inspectorB.getTableName() + " and "+ JointInspector.getTableName()  + " sql ==> "+ sql + " check the stack trace to debug");
 					e.printStackTrace();
 				}
 			} );
@@ -451,7 +468,7 @@ public class DQL {
 			 
 			 }
 		}
-		returnedRow.forEach(r-> System.out.println("row " + r));
+		returnedRow.forEach(r-> log.info("row " + r));
 		
 		}	
 		return  returnedRow;
@@ -480,8 +497,7 @@ public class DQL {
 				foreignKeyOfB.getJoinedColumn() +
 				" WHERE " + condition ;
 			;
-		
-		System.out.println(sql);
+		log.info(sql);
 		
 		LinkedList <HashMap<String, Object>> returnedRow = new LinkedList<>();
 		try 
@@ -507,6 +523,8 @@ public class DQL {
 					row.put(column, rs.getObject(column));
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
+					log.error("An SQL exception has been thrown while excuting a join querry on  " + inspectorA.getTableName() + " and "
+							+ inspectorB.getTableName() + " and "+ JointInspector.getTableName()  + " sql ==> "+ sql + " check the stack trace to debug");
 					e.printStackTrace();
 				}
 			} );
@@ -517,7 +535,7 @@ public class DQL {
 			 
 			 }
 		}
-		returnedRow.forEach(r-> System.out.println("row " + r));
+		returnedRow.forEach(r-> log.info("row " + r));
 		
 		}	
 		return  returnedRow;

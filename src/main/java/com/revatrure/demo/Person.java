@@ -22,7 +22,7 @@ public class Person {
 	private int id;
 	
 	@Column(columnName="person", dataType ="varchar(50)", defaultValue = " 'blue' " , 
-			unique = true , check = "condition" , refrences = "column(name)" , nullable = true)
+			unique = true , nullable = true)
 	private String model;
 	
 	@Column(columnName="age", dataType = "varchar(50)", nullable = false)

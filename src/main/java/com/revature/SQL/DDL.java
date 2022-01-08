@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.List;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.revatrure.demo.Car;
 import com.revature.exception.DdlException;
@@ -54,7 +56,7 @@ public class DDL {
 	
 	BasicDataSource connPool = DataBase.connPool;
 	
-
+	private static final Logger log = LoggerFactory.getLogger(DDL.class);
 	
 	
 
@@ -123,7 +125,7 @@ public class DDL {
 				
 				sql +=  ")";
 				
-				System.out.println(sql);
+				 log.info(sql);
 				
 				try(ResultSet rs = stmt.executeQuery(sql) ){
 					
@@ -134,9 +136,11 @@ public class DDL {
 			} 
 			catch (SQLException e) {
 				if(e.getMessage().equals("No results were returned by the query.")) {
-					System.out.println( inspector.getTableName() + " table created successfully");
+					log.info( inspector.getTableName() + " table created successfully");
+					
 					return true ;
 				}else {
+					log.error("An SQL exception has been thrown while creating " + inspector.getTableName() + " check the stack trace to debug");
 					throw new DdlException(e.getMessage(),  e.getCause());
 				}
 				
@@ -175,8 +179,7 @@ public class DDL {
 			 try( Connection conn = connPool.getConnection();
 				 Statement		 stmt = conn.createStatement();	 ) 
 			 {
-			
-				System.out.println(sql1);
+				 log.info(sql1);
 				
 				try(ResultSet rs = stmt.executeQuery(sql1) ){
 					
@@ -188,9 +191,10 @@ public class DDL {
 				// TODO Auto-generated catch block
 				
 				if(e.getMessage().equals("No results were returned by the query.")) {
-					System.out.println("Table altered successfully");
+					log.info("Table altered successfully");
 					return true ;
 				}else {
+					log.error("An SQL exception has been thrown while altering " + inspector.getTableName() + " check the stack trace to debug");
 					throw new DdlException(e.getMessage(),  e.getCause());
 				}
 				
@@ -228,8 +232,7 @@ public class DDL {
 				Statement	stmt = conn.createStatement();	) 
 			{	
 				String  sql = "truncate table "  + inspector.getTableName() ;
-						
-				System.out.println(sql);
+						log.info(sql);
 				try(ResultSet rs = stmt.executeQuery(sql) ){
 					
 				}
@@ -237,9 +240,10 @@ public class DDL {
 			catch (SQLException e) {
 		
 				if(e.getMessage().equals("No results were returned by the query.")) {
-					System.out.println("Table truncated successfully");
+					log.info("Table truncated successfully");
 					return true ;
 				}else {
+					log.error("An SQL exception has been thrown while truncating " + inspector.getTableName() + " check the stack trace to debug");
 					throw new DdlException(e.getMessage(),  e.getCause());
 				}
 				
@@ -249,6 +253,55 @@ public class DDL {
 			return false;
 		}
 		
+		
+		/**
+		 * 
+		 * @param clazz
+		 * @return boolean 
+		 * @throws DdlException
+		 * 
+		 * This method is dangerous use it only if you are sure that you want to delete all data inside of an existing table 
+		 * 
+		 * If another column depends on the data of this table it will be deleted . 
+		 * 
+		 * This method is used to delete every rows in an existing table 
+		 * 
+		 * Check if class passed has @Entity annotation by invoking Inspector.of()
+		 * 
+		 * Execute the the truncate statement 
+		 * 
+		 * return true or catch the exception if an error occurs 
+		 */
+		
+		public boolean truncateCascade(Class<?> clazz)  throws DdlException  {
+			Inspector<Class<?>> inspector = Inspector.of(clazz); 
+			
+			
+			try( Connection conn = connPool.getConnection() ;
+				Statement	stmt = conn.createStatement();	) 
+			{	
+				String  sql = "truncate table "  + inspector.getTableName() + " CASCADE ";
+						log.info(sql);
+				try(ResultSet rs = stmt.executeQuery(sql) ){
+					
+				}
+			} 
+			catch (SQLException e) {
+		
+				if(e.getMessage().equals("No results were returned by the query.")) {
+				log.info("Table truncated successfully");
+				
+					return true ;
+				}else {
+					log.error("An SQL exception has been thrown while truncating " + inspector.getTableName() + " check the stack trace to debug");
+					throw new DdlException(e.getMessage(),  e.getCause());
+				}
+				
+			}
+		
+			
+			return false;
+		}
 		
 		
 		/**
@@ -278,8 +331,8 @@ public class DDL {
 					Statement	stmt = conn.createStatement();
 					
 					) {
-			
-				System.out.println(sql);
+				log.info(sql);
+				
 				try(ResultSet rs = stmt.executeQuery(sql) ){
 					
 				}
@@ -288,9 +341,10 @@ public class DDL {
 			catch (SQLException e) {
 				// TODO Auto-generated catch block	
 				if(e.getMessage().equals("No results were returned by the query.")) {
-					System.out.println("Table dropped successfully");
+					log.info("Table dropped successfully");
 					return true ;
 				}else {
+					log.error("An SQL exception has been thrown while droping " + inspector.getTableName() + " check the stack trace to debug");
 					throw new DdlException(e.getMessage(),  e.getCause());
 				}
 				
@@ -299,6 +353,56 @@ public class DDL {
 		}
 		
 	
+		/**
+		 * 
+		 * @param clazz
+		 * @return boolean
+		 * @throws DdlException
+		 * 
+		 * This method is dangerous use it only if you are sure that you want to delete an existing table 
+		 * 
+		 * If another column depends on the data of this table it will be deleted . 
+		 * 
+		 * This method is used to delete an existing table 
+		 * 
+		 * Check if class passed has @Entity annotation by invoking Inspector.of()
+		 * 
+		 * Execute the the drop statement 
+		 * 
+		 * return true or catch the exception if an error occurs 
+		 * 
+		 */
+		
+		public boolean dropCascade(Class<?> clazz) throws DdlException {
+			Inspector<Class<?>> inspector = Inspector.of(clazz); 
+			
+			String  sql = "drop table  "  + inspector.getTableName() + " CASCADE " ;
+			
+			try( Connection conn = connPool.getConnection()  ;
+					Statement	stmt = conn.createStatement();
+					
+					) {
+				log.info(sql);
+				
+				try(ResultSet rs = stmt.executeQuery(sql) ){
+					
+				}
+		
+			} 
+			catch (SQLException e) {
+				// TODO Auto-generated catch block	
+				if(e.getMessage().equals("No results were returned by the query.")) {
+					log.info("Table dropped successfully");
+					return true ;
+				}else {
+					log.error("An SQL exception has been thrown while droping " + inspector.getTableName() + " check the stack trace to debug");
+					throw new DdlException(e.getMessage(),  e.getCause());
+				}
+				
+			}
+			return false;
+		}
+
 		
 		
 }

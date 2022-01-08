@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.revature.exception.IdDontExistException;
 import com.revature.exception.VarArgsHasDiffrentException;
@@ -87,6 +89,7 @@ import com.revature.util.DataBase;
 
 public class Transaction {
 	private  Connection conn;
+	private static final Logger log = LoggerFactory.getLogger(Transaction.class);
 	
 	// this block will be invoked each time the we instantiate  a new transaction 
 	 {
@@ -127,10 +130,12 @@ public class Transaction {
 	public void commit() {
 		 try {
 			conn.commit();
-			System.out.println("Transaction  commited ");
+		log.info("Transaction  commited ");
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			
+			log.error("Commit failed ");
 			e.printStackTrace();
 		}
 	}
@@ -146,10 +151,11 @@ public class Transaction {
 		 Savepoint savepoint;
 		try {
 			savepoint = conn.setSavepoint(name);
-			System.out.println("savepoint has been created ");
+		log.info("savepoint has been created ");
 			 return savepoint;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			log.error("savepoint failed ");
 			e.printStackTrace();
 		}
 		return null;
@@ -165,9 +171,10 @@ public class Transaction {
 	public void rollBack(Savepoint savePoint) {
 		try {
 			conn.rollback(savePoint);
-			System.out.println("rollback to a savepoint has been invoked ");
+			log.info("rollback to a savepoint has been invoked ");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			log.error("rollBack failed ");
 			e.printStackTrace();
 		}
 	}
@@ -179,9 +186,10 @@ public class Transaction {
 	public void rollBack() {
 		try {
 			conn.rollback();
-			System.out.println("rollback has been invoked ");
+		 log.info("rollback has been invoked ");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			log.error("rollBack failed ");
 			e.printStackTrace();
 		}
 	}

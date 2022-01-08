@@ -11,6 +11,8 @@ import java.util.List;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.postgresql.util.PGobject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.revature.exception.IdDontExistException;
 import com.revature.exception.VarArgsHasDiffrentException;
@@ -71,8 +73,10 @@ import com.revature.util.DataBase;
 	 */
 
 public class DML {
-	BasicDataSource connPool = DataBase.connPool;
 	
+	
+	BasicDataSource connPool = DataBase.connPool;
+	private static final Logger log = LoggerFactory.getLogger(DML.class);
 	
 	/**
 	 * 
@@ -113,7 +117,7 @@ public class DML {
 		for(int i=0 ; i < columns.size() ; i++) {	
 			String colmun = columns.get(i).getColumnName();	
 			
-			Object value = ( columnsAndValues.get(colmun)  instanceof String) ? "'" + columnsAndValues.get(colmun)  + "'" :columnsAndValues.get(colmun) ;
+			Object value = ( columnsAndValues.get(colmun)  instanceof String) ? "'" + columnsAndValues.get(colmun)  + "'" : columnsAndValues.get(colmun) ;
 			
 			
 			if(i == columns.size()-1 ) {
@@ -177,9 +181,9 @@ public class DML {
 		
 		sql += " returning  " + inspector1.getTableName() ;
 		
-		System.out.println(sql);
 		
 		
+		log.info(sql);
 		 
 		try 
 		(Connection conn = connPool.getConnection()  ;
@@ -192,7 +196,10 @@ public class DML {
 			 returnedRow.add( rs.getObject(1));
 			 }
 		}
-		System.out.println(returnedRow);
+		
+		log.info("Objects has been added to DB");
+		log.info(returnedRow.toString() );
+		
 
 		return  returnedRow;
 		
@@ -213,7 +220,7 @@ public class DML {
 		
 		String sql = "DELETE FROM " + inspector.getTableName() + " WHERE " + inspector.getPrimaryKey().getColumnName() +" =  " + id + " returning " + inspector.getPrimaryKey().getColumnName()  ;
 		
-		System.out.println(sql);
+		log.info(sql);
 		
 		try
 		(Connection conn = connPool.getConnection()  ;
@@ -221,10 +228,11 @@ public class DML {
 		ResultSet rs = stmt.executeQuery(sql);)
 		{
 		if(rs.next()) {
+			log.info("object with id #" + id + "has been deleted");
 			return rs.getInt(inspector.getPrimaryKey().getColumnName()) ;	
 			
 		}else {
-			System.out.println("row with id " + id + " don't exist in the table " + inspector.getTableName());
+			log.warn("row with id " + id + " don't exist in the table " + inspector.getTableName());
 			return 0;
 		}
 		}
@@ -252,7 +260,7 @@ public class DML {
 				 + " returning " + inspector.getPrimaryKey().getColumnName() 
 				;
 		
-		System.out.println(sql);
+		log.info(sql);
 		try
 		(Connection conn = connPool.getConnection()  ;
 		Statement stmt = conn.createStatement();
@@ -264,19 +272,18 @@ public class DML {
 			 while(rs.next()) {		
 				 deletedRow.add( rs.getObject(1));
 			 }
-			 
-			 System.out.println(deletedRow.size() + " rows was deleted from table " + inspector.getTableName());
+			 log.info(deletedRow.size() + " rows was deleted from table " + inspector.getTableName());
 			
 		}
 		else {
-			
-			System.out.println("0 row was deleted form table " + inspector.getTableName());
+			log.warn("0 row was deleted form table " + inspector.getTableName());
 			return deletedRow;
 			
 		}
 		return deletedRow;
 		}
 	}
+	
 	
 	/**
 	 * 
@@ -296,17 +303,17 @@ public class DML {
 		//update  cars   set color = 'white' where  car_id = 208 returning cars
 		
 		String sql = "update " + inspector.getTableName() + " set " + statement  + " WHERE " + inspector.getPrimaryKey().getColumnName() +" =  " + id + " returning " + inspector.getTableName() ;
-		
-		System.out.println(sql);
+		log.info(sql);
 		try(
 		Connection conn = connPool.getConnection()  ;
 		Statement stmt = conn.createStatement();
 		ResultSet rs = stmt.executeQuery(sql);){
 		if(rs.next()) {
+			log.info("row with id " + id + "has been updated in the table " + inspector.getTableName());
 			return rs.getObject(1) ;	
 			
 		}else {
-
+			log.warn("row with id " + id + " don't exist in the table " + inspector.getTableName());
 			throw new IdDontExistException("row with id " + id + " don't exist in the table " + inspector.getTableName());
 		}
 		}
@@ -331,8 +338,7 @@ public class DML {
 		
 		String sql = "update " + inspector.getTableName() + " set " + statement  + " WHERE " 
 		+  condition + " returning " + inspector.getTableName() ;
-		
-		System.out.println(sql);
+		log.info(sql);
 		try
 		(Connection conn = connPool.getConnection()  ;
 		
@@ -348,8 +354,7 @@ public class DML {
 				updatedRow.add(rs.getObject(1)) ;	
 			}
 		}
-		
-		System.out.println( updatedRow.size() + " rows in the table were updated ");
+		log.info( updatedRow.size() + " rows in the table were updated ");
 		
 		return updatedRow;
 		

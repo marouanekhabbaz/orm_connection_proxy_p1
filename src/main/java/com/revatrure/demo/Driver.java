@@ -17,6 +17,7 @@ import com.revature.introspection.ColumnField;
 import com.revature.introspection.Inspector;
 import com.revature.introspection.PrimaryKeyField;
 import com.revature.util.DataBase;
+import com.revature.util.Environment;
 
 
 public class Driver {
@@ -25,42 +26,55 @@ public class Driver {
 	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
 		System.out.println("befoooore ");
 		
-		DataBase db = new DataBase().getConnection();
+		DataBase db = new DataBase().getConnection(Environment.TEST);
 		
+		try {
+			db.addMappedClass(Person.class,  Car.class , JoinedTable.class );
+		} catch (DdlException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
+	
 		
 		Car bmw = new Car(1, "bmw", "blue" );
 		Car renault = new Car(2, "renault", "red");
 		Person p = new Person(0, "marouane", "pass", 0, false);
 		
-		JoinedTable j43 = new JoinedTable(2, 2);
-		JoinedTable j1 = new JoinedTable(1, 1);
-		JoinedTable j2= new JoinedTable(3, 3);
-		JoinedTable j3 = new JoinedTable(4, 4);
+//		JoinedTable j43 = new JoinedTable(2, 2);
+//		JoinedTable j1 = new JoinedTable(1, 1);
+//		JoinedTable j2= new JoinedTable(3, 3);
+//		JoinedTable j3 = new JoinedTable(4, 4);
 		
 		DDL d = new DDL();
 		
 		// DML dml = new DML();
 		
-		DQL  dql = new DQL();
+		
 		
 		DML	dml = new DML();
 		
 		
-		try {
-			LinkedList<HashMap<String, Object>> result = dql.joinQuerry(Car.class, Person.class);
-			
-			System.out.println("=========================================");
-			LinkedList<HashMap<String, Object>> resultWithCondition = dql.joinQuerry(Car.class, Person.class, "color = 'red' ");
-			System.out.println("=========================================");
-			LinkedList<HashMap<String, Object>> resultForm3tables = dql.joinQuerryManyToMany( JoinedTable.class ,Car.class, Person.class);
-			System.out.println("=========================================");
-			LinkedList<HashMap<String, Object>> resultForm3tablesWithCondition = dql.joinQuerryManyToMany( JoinedTable.class ,Car.class, Person.class, "a.color ='red'");
-			
-		} catch (SQLException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
+		DQL  dql = new DQL();
+		
+		
+//		dml.insert(bmw, renault)
+		
+//		try {
+//			LinkedList<HashMap<String, Object>> result = dql.joinQuerry(Car.class, Person.class);
+//			
+//		
+//			LinkedList<HashMap<String, Object>> resultWithCondition = dql.joinQuerry(Car.class, Person.class, "color = 'red' ");
+//			
+//			LinkedList<HashMap<String, Object>> resultForm3tables = dql.joinQuerryManyToMany( JoinedTable.class ,Car.class, Person.class);
+//		
+//			LinkedList<HashMap<String, Object>> resultForm3tablesWithCondition = dql.joinQuerryManyToMany( JoinedTable.class ,Car.class, Person.class, "a.color ='red'");
+//			
+//		} catch (SQLException e2) {
+//			// TODO Auto-generated catch block
+//			e2.printStackTrace();
+//		}
+//		
 		
 //		try {
 //		
@@ -68,11 +82,12 @@ public class Driver {
 //			
 //			int deleted = dml.delete(Car.class, 2);
 //			
-//			List<Object> deletedRows = dml.delete(Car.class, "WHERE color = 'red ");
+//			List<Object> deletedRows = dml.delete(Car.class, "color = 'red'");
 //			
-//			Object updated = dml.update(Car.class, "color = 'green' ", 1);
+//			Object updated = dml.update(Car.class, "color = 'green' ", 67);
 //			
-//			List<Object> updatedRows = dml.update(Car.class,  "color = 'green' " , "WHERE color = 'blue' ");
+//			
+//			List<Object> updatedRows = dml.update(Car.class,  "color = 'green' " , " color = 'blue' ");
 //			
 //			
 //		} catch (IllegalArgumentException e1) {
