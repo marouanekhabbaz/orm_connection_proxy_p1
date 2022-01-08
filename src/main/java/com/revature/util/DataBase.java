@@ -17,8 +17,6 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.revatrure.demo1.Car;
-import com.revatrure.demo1.Person;
 import com.revature.SQL.DDL;
 import com.revature.SQL.DQL;
 import com.revature.exception.DdlException;

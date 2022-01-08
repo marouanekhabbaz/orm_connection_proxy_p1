@@ -19,6 +19,7 @@ import com.revature.SQL.DDL;
 import com.revature.SQL.DML;
 import com.revature.SQL.DQL;
 import com.revature.exception.DdlException;
+import com.revature.exception.NoForeignKeyFoundException;
 import com.revature.util.DataBase;
 import com.revature.util.Environment;
 
@@ -56,17 +57,11 @@ public class DqlTest {
 			ddl.truncateCascade(Car.class);
 			ddl.truncateCascade(Client.class);
 			ddl.truncateCascade(Service.class);
-			try {
-				dml.insert(cars);
-				dml.insert(client5, client4, client3 , client2 , client1);
-			} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			
 		
-		} catch (DdlException e) {
+			dml.insert(cars);
+			dml.insert(client5, client4, client3 , client2 , client1);
+		
+		} catch (SQLException | IllegalArgumentException | IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -230,6 +225,21 @@ public class DqlTest {
 	List<HashMap<String, Object>> result =	dql.joinQuerryManyToMany( Service.class , Car.class, Client.class ," a.color = 'white' " );
  
 	assertEquals(2, result.size());
+	
+	
+	}
+	
+	
+	
+	
+	 	@Test(expected = NoForeignKeyFoundException.class)
+	// find foreign key exception 
+	public void test10() throws SQLException {
+		
+		
+	List<HashMap<String, Object>> result =	dql.joinQuerry( Client.class ,Car.class );
+ 
+	assertEquals(0, result.size());
 	
 	
 	}
