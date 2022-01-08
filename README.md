@@ -43,8 +43,8 @@ It also provides classes and methods that simplify the definition, manipulation,
 ## Getting Started  
 Currently project must be included as local dependency. to do so:
 ```shell
-  git clone https://github.com/marouanekhabbaz/orm_connection_proxy.git
-  cd orm_connection_proxy
+  git clone https://github.com/marouanekhabbaz/orm_connection_proxy_p1
+  cd orm_connection_proxy_p1
   mvn install
 ```
 Next, place the following inside your project pom.xml file:
@@ -64,9 +64,33 @@ In your application.proprties make sure to use the same keys below **url** , **u
 
 
  ```
-url= your database url
-username= your  database username
-password= your database password  
+ 
+
+DEV_url= your database url for dev
+DEV_username=your  database username
+DEV_password=your database password
+ 
+
+
+TEST_url = your database url for tests
+TEST_username=your  database username
+TEST_password =your database password
+
+
+PROD_url= your database url for production
+PROD_username=your  database username
+PROD_password=your database password
+
+STAGE_url=your database url for staging
+STAGE_username=your  database username
+STAGE_password=your database password
+
+#minimum number of connection object that are to be kept alive in the pool.
+minIdle=5
+#maximum number of  connections objects that can be alive in the pool.
+maxIdle=15
+#maximum number of PreparedStatements in the session
+maxOpenPreparedStatements=50
 
  ``` 
 
@@ -204,7 +228,14 @@ public class Car {
 
    import com.revature.util.DataBase;
 
+   // if args passed it will connect by default to developement envirement
    DataBase db = new DataBase().getConnection();
+
+   /*
+   * To work on specific envirement pass it as a param to getConnection(Environment.TEST);
+   Environment.TEST ,  Environment.DEV , Environment.PROD , Environment.STAGE
+   *public 	DataBase db = new DataBase().getConnection(Environment.TEST);
+   */
 		
 
 ````
