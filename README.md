@@ -446,13 +446,13 @@ Car renault = new Car(4, "renault", "red");
 - ### DQL
 
 
-- #### `public Object get(Class<?> clazz, int id)`
+- #### `public <T> T get(Class<T> clazz, int id) throws SQLException`
 - Return an instance of the class passed , instantiated using the constructor annotated with  `@ConstructorProperties`.
 
-- #### `public LinkedList<Object> getAll(Class<?> clazz ) `
+- #### `public <T> LinkedList<T> getAll(Class<T> clazz ) throws SQLException`
 - Return a linkedList of object of all rows inside the table in database, the objects returned are instantiated using the constructor annotated with  `@ConstructorProperties`.
 
-- #### `public LinkedList<Object> getWhere(Class<?> clazz , String condition )`
+- #### `public <T> LinkedList<T> getWhere(Class<T> clazz , String condition ) throws SQLException`
 - Return a linkedList of object of all rows inside the table in database that meet the condition passed as args, the objects returned are instantiated using the constructor annotated with  `@ConstructorProperties`.
 
 - #### `public LinkedList<HashMap<String, Object>> nativeQuerry( String querry ) `
