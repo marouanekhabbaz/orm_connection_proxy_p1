@@ -1,5 +1,7 @@
 package com.revature.SQL;
 
+import java.beans.ConstructorProperties;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -7,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -77,6 +80,11 @@ public class DML {
 	
 	BasicDataSource connPool = DataBase.connPool;
 	private static final Logger log = LoggerFactory.getLogger(DML.class);
+	
+	public static final String ANSI_RESET = "\u001B[0m";
+	public static final String ANSI_RED = "\u001B[31m";
+	public static final String ANSI_YELLOW = "\u001B[33m";
+	
 	
 	/**
 	 * 
@@ -232,7 +240,7 @@ public class DML {
 			return rs.getInt(inspector.getPrimaryKey().getColumnName()) ;	
 			
 		}else {
-			log.warn("row with id " + id + " don't exist in the table " + inspector.getTableName());
+			log.warn( ANSI_YELLOW + "row with id " + id + " don't exist in the table " + inspector.getTableName() + ANSI_RESET);
 			return 0;
 		}
 		}
@@ -276,7 +284,7 @@ public class DML {
 			
 		}
 		else {
-			log.warn("0 row was deleted form table " + inspector.getTableName());
+			log.warn( ANSI_RESET + "0 row was deleted form table " + inspector.getTableName() + ANSI_RESET);
 			return deletedRow;
 			
 		}
@@ -300,8 +308,6 @@ public class DML {
 		
 		Inspector<Class<?>> inspector = Inspector.of(clazz);
 		
-		//update  cars   set color = 'white' where  car_id = 208 returning cars
-		
 		String sql = "update " + inspector.getTableName() + " set " + statement  + " WHERE " + inspector.getPrimaryKey().getColumnName() +" =  " + id + " returning " + inspector.getTableName() ;
 		log.info(sql);
 		try(
@@ -313,7 +319,7 @@ public class DML {
 			return rs.getObject(1) ;	
 			
 		}else {
-			log.warn("row with id " + id + " don't exist in the table " + inspector.getTableName());
+			log.warn( ANSI_YELLOW +  "row with id " + id + " don't exist in the table " + inspector.getTableName() + ANSI_RESET);
 			throw new IdDontExistException("row with id " + id + " don't exist in the table " + inspector.getTableName());
 		}
 		}

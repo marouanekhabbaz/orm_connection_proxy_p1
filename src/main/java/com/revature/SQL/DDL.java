@@ -11,7 +11,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.revatrure.demo.Car;
+import com.revatrure.demo1.Car;
 import com.revature.exception.DdlException;
 import com.revature.introspection.ColumnField;
 import com.revature.introspection.Inspector;
@@ -57,6 +57,9 @@ public class DDL {
 	BasicDataSource connPool = DataBase.connPool;
 	
 	private static final Logger log = LoggerFactory.getLogger(DDL.class);
+	public static final String ANSI_RESET = "\u001B[0m";
+	public static final String ANSI_RED = "\u001B[31m";
+	public static final String ANSI_YELLOW = "\u001B[33m";
 	
 	
 
@@ -140,7 +143,7 @@ public class DDL {
 					
 					return true ;
 				}else {
-					log.error("An SQL exception has been thrown while creating " + inspector.getTableName() + " check the stack trace to debug");
+					log.error(ANSI_RED +  "An SQL exception has been thrown while creating " + inspector.getTableName() + " check the stack trace to debug" + ANSI_RESET);
 					throw new DdlException(e.getMessage(),  e.getCause());
 				}
 				
@@ -194,7 +197,8 @@ public class DDL {
 					log.info("Table altered successfully");
 					return true ;
 				}else {
-					log.error("An SQL exception has been thrown while altering " + inspector.getTableName() + " check the stack trace to debug");
+					log.error(ANSI_RED + "An SQL exception has been thrown while altering " + inspector.getTableName() 
+					+ " check the stack trace to debug" + ANSI_RESET);
 					throw new DdlException(e.getMessage(),  e.getCause());
 				}
 				
@@ -231,7 +235,7 @@ public class DDL {
 			try( Connection conn = connPool.getConnection() ;
 				Statement	stmt = conn.createStatement();	) 
 			{	
-				String  sql = "truncate table "  + inspector.getTableName() ;
+				String  sql = "truncate table "  + inspector.getTableName() + " RESTART identity " ;
 						log.info(sql);
 				try(ResultSet rs = stmt.executeQuery(sql) ){
 					
@@ -243,7 +247,8 @@ public class DDL {
 					log.info("Table truncated successfully");
 					return true ;
 				}else {
-					log.error("An SQL exception has been thrown while truncating " + inspector.getTableName() + " check the stack trace to debug");
+					log.error(ANSI_RED+"An SQL exception has been thrown while truncating " + inspector.getTableName() 
+					+ " check the stack trace to debug" + ANSI_RESET);
 					throw new DdlException(e.getMessage(),  e.getCause());
 				}
 				
@@ -280,7 +285,7 @@ public class DDL {
 			try( Connection conn = connPool.getConnection() ;
 				Statement	stmt = conn.createStatement();	) 
 			{	
-				String  sql = "truncate table "  + inspector.getTableName() + " CASCADE ";
+				String  sql = "truncate table "  + inspector.getTableName() + " RESTART identity CASCADE ";
 						log.info(sql);
 				try(ResultSet rs = stmt.executeQuery(sql) ){
 					
@@ -293,7 +298,8 @@ public class DDL {
 				
 					return true ;
 				}else {
-					log.error("An SQL exception has been thrown while truncating " + inspector.getTableName() + " check the stack trace to debug");
+					log.error(ANSI_RED + "An SQL exception has been thrown while truncating " + inspector.getTableName() 
+					+ " check the stack trace to debug" + ANSI_RESET);
 					throw new DdlException(e.getMessage(),  e.getCause());
 				}
 				
@@ -325,7 +331,7 @@ public class DDL {
 		public boolean drop(Class<?> clazz) throws DdlException {
 			Inspector<Class<?>> inspector = Inspector.of(clazz); 
 			
-			String  sql = "drop table  "  + inspector.getTableName() ;
+			String  sql = "drop table "  + inspector.getTableName() ;
 			
 			try( Connection conn = connPool.getConnection()  ;
 					Statement	stmt = conn.createStatement();
@@ -344,7 +350,8 @@ public class DDL {
 					log.info("Table dropped successfully");
 					return true ;
 				}else {
-					log.error("An SQL exception has been thrown while droping " + inspector.getTableName() + " check the stack trace to debug");
+					log.error(ANSI_RED +   "An SQL exception has been thrown while droping " + inspector.getTableName() 
+					+ " check the stack trace to debug" + ANSI_RESET);
 					throw new DdlException(e.getMessage(),  e.getCause());
 				}
 				
@@ -395,7 +402,47 @@ public class DDL {
 					log.info("Table dropped successfully");
 					return true ;
 				}else {
-					log.error("An SQL exception has been thrown while droping " + inspector.getTableName() + " check the stack trace to debug");
+					log.error(ANSI_RED + "An SQL exception has been thrown while droping " +
+				inspector.getTableName() + " check the stack trace to debug" + ANSI_RESET);
+					throw new DdlException(e.getMessage(),  e.getCause());
+				}
+				
+			}
+			return false;
+		}
+		
+		
+		/**
+		 * 
+		 * @param clazz
+		 * @return
+		 * @throws DdlException
+		 */
+		
+		public boolean dropCascadeIfExist(Class<?> clazz) throws DdlException {
+			Inspector<Class<?>> inspector = Inspector.of(clazz); 
+			
+			String  sql = "drop table if exists "  + inspector.getTableName() + " CASCADE " ;
+			
+			try( Connection conn = connPool.getConnection()  ;
+					Statement	stmt = conn.createStatement();
+					
+					) {
+				log.info(sql);
+				
+				try(ResultSet rs = stmt.executeQuery(sql) ){
+					
+				}
+		
+			} 
+			catch (SQLException e) {
+				// TODO Auto-generated catch block	
+				if(e.getMessage().equals("No results were returned by the query.")) {
+					log.info("Table dropped successfully");
+					return true ;
+				}else {
+					log.error(ANSI_RED + "An SQL exception has been thrown while droping " +
+				inspector.getTableName() + " check the stack trace to debug" + ANSI_RESET);
 					throw new DdlException(e.getMessage(),  e.getCause());
 				}
 				

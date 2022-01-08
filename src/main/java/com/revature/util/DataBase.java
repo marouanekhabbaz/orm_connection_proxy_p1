@@ -17,9 +17,8 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.revatrure.demo.Car;
-import com.revatrure.demo.Person;
-
+import com.revatrure.demo1.Car;
+import com.revatrure.demo1.Person;
 import com.revature.SQL.DDL;
 import com.revature.SQL.DQL;
 import com.revature.exception.DdlException;
@@ -75,6 +74,9 @@ public class DataBase {
 				String url = "";
 				String username = "";
 				String password = "";
+				String minIdle = "";
+				String maxIdle = "";
+				String maxOpenPreparedStatements = "";
 	        	
 	      	String path = new File("src\\\\main\\\\resources\\\\application.properties").getAbsolutePath();
 				// File path = new File("C:\\Users\\marouanekhabbaz\\Desktop\\demos\\DemoForOCP\\src\\main\\resources\\application.properties");
@@ -91,6 +93,9 @@ public class DataBase {
 				url = prop.getProperty("DEV_url"); // this is retrieving the value of the "url" key in application.properties file
 				username =  prop.getProperty("DEV_username");
 				password = prop.getProperty("DEV_password");
+				minIdle = prop.getProperty("minIdle");
+				maxIdle = prop.getProperty("maxIdle");
+				maxOpenPreparedStatements = prop.getProperty("maxOpenPreparedStatements");
 				
 
 	
@@ -100,9 +105,9 @@ public class DataBase {
 	            dataSource.setUsername(username);
 	            dataSource.setPassword(password);
 	 
-	            dataSource.setMinIdle(5);
-	            dataSource.setMaxIdle(10);
-	            dataSource.setMaxOpenPreparedStatements(100);
+	            dataSource.setMinIdle(Integer.parseInt(minIdle));
+	            dataSource.setMaxIdle(Integer.parseInt(maxIdle));
+	            dataSource.setMaxOpenPreparedStatements(Integer.parseInt(maxOpenPreparedStatements));
 	 
 	            connPool = dataSource;
 	            log.info("Currently connected into development environment");
@@ -124,6 +129,9 @@ public class DataBase {
 				String url = "";
 				String username = "";
 				String password = "";
+				String minIdle = "";
+				String maxIdle = "";
+				String maxOpenPreparedStatements = "";
 	        	
 	      	String path = new File("src\\\\main\\\\resources\\\\application.properties").getAbsolutePath();
 				// File path = new File("C:\\Users\\marouanekhabbaz\\Desktop\\demos\\DemoForOCP\\src\\main\\resources\\application.properties");
@@ -144,6 +152,9 @@ public class DataBase {
 				url = prop.getProperty(env+"_url"); // this is retrieving the value of the "url" key in application.properties file
 				username =  prop.getProperty(env+"_username");
 				password = prop.getProperty(env+"_password");	
+				minIdle = prop.getProperty("minIdle");
+				maxIdle = prop.getProperty("maxIdle");
+				maxOpenPreparedStatements = prop.getProperty("maxOpenPreparedStatements");
 				
 	        	
 	            BasicDataSource dataSource = new BasicDataSource();
@@ -151,9 +162,9 @@ public class DataBase {
 	            dataSource.setUsername(username);
 	            dataSource.setPassword(password);
 	 
-	            dataSource.setMinIdle(5);
-	            dataSource.setMaxIdle(10);
-	            dataSource.setMaxOpenPreparedStatements(100);
+	            dataSource.setMinIdle(Integer.parseInt(minIdle));
+	            dataSource.setMaxIdle(Integer.parseInt(maxIdle));
+	            dataSource.setMaxOpenPreparedStatements(Integer.parseInt(maxOpenPreparedStatements));
 	 
 	            connPool = dataSource;
 	            

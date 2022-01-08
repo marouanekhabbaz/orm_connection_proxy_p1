@@ -52,7 +52,9 @@ import com.revature.util.DataBase;
 public class DQL {
 	BasicDataSource connPool = DataBase.connPool;
 	private static final Logger log = LoggerFactory.getLogger(DQL.class);
-	
+	public static final String ANSI_RESET = "\u001B[0m";
+	public static final String ANSI_RED = "\u001B[31m";
+	public static final String ANSI_YELLOW = "\u001B[33m";
 	
 	/**
 	 * 
@@ -91,13 +93,14 @@ public class DQL {
 		return 	(T) constructor.newInstance(args.toArray());
 			
 		}else {
-			log.warn("No result found ");
+			log.warn( ANSI_YELLOW + "No result found " + ANSI_RESET) ;
 			
 			return null;
 		}	
 	} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 		// TODO Auto-generated catch block
-		log.info("An SQL exception has been thrown while searching for  " +id + " from " + inspector.getTableName() + " check the stack trace to debug");
+		log.error(ANSI_RED + "An SQL exception has been thrown while searching for  " +id +
+				" from " + inspector.getTableName() + " check the stack trace to debug" +  ANSI_RESET);
 		e.printStackTrace();
 	}
 		return null;
@@ -143,7 +146,8 @@ public class DQL {
 		log.info("returning data from " + inspector.getTableName() );
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 		// TODO Auto-generated catch block
-			log.error("An SQL exception has been thrown while retriving data from  " + inspector.getTableName() + " check the stack trace to debug");
+			log.error(ANSI_RED + "An SQL exception has been thrown while retriving data from  " + 
+		inspector.getTableName() + " check the stack trace to debug" + ANSI_RESET);
 		e.printStackTrace();
 	}
 		if(resultList.size()==0) {
@@ -194,11 +198,12 @@ public class DQL {
 		}	
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 		// TODO Auto-generated catch block
-		log.error("An SQL exception has been thrown while retriving data from  " + inspector.getTableName() + " check the stack trace to debug");
+		log.error(ANSI_RED+ "An SQL exception has been thrown while retriving data from  " +
+		inspector.getTableName() + " check the stack trace to debug" + ANSI_RESET);
 		e.printStackTrace();
 	}
 		if(resultList.size()==0) {
-			log.warn( inspector.getTableName() + " is empty ");
+			log.warn(ANSI_YELLOW +  inspector.getTableName() + " is empty " + ANSI_RESET);
 			
 		}
 		
@@ -310,8 +315,8 @@ public class DQL {
 					row.put(column, rs.getObject(column));
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					log.error("An SQL exception has been thrown while excuting a join querry on  " + inspectorA.getTableName() + " and "
-						+ inspectorB.getTableName()  + " sql ==> "+ sql + " check the stack trace to debug");
+					log.error(ANSI_RED +  "An SQL exception has been thrown while excuting a join querry on  " + inspectorA.getTableName() + " and "
+						+ inspectorB.getTableName()  + " sql ==> "+ sql + " check the stack trace to debug" + ANSI_RESET);
 					e.printStackTrace();
 				}
 			} );
@@ -381,8 +386,8 @@ public class DQL {
 					row.put(column, rs.getObject(column));
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					log.error("An SQL exception has been thrown while excuting a join querry on  " + inspectorA.getTableName() + " and "
-							+ inspectorB.getTableName()  + " sql ==> "+ sql + " check the stack trace to debug");
+					log.error(ANSI_RED + "An SQL exception has been thrown while excuting a join querry on  " + inspectorA.getTableName() + " and "
+							+ inspectorB.getTableName()  + " sql ==> "+ sql + " check the stack trace to debug" + ANSI_RESET);
 					
 					e.printStackTrace();
 				}
@@ -456,8 +461,9 @@ public class DQL {
 					row.put(column, rs.getObject(column));
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					log.error("An SQL exception has been thrown while excuting a join querry on  " + inspectorA.getTableName() + " and "
-							+ inspectorB.getTableName() + " and "+ JointInspector.getTableName()  + " sql ==> "+ sql + " check the stack trace to debug");
+					log.error(ANSI_RED +  "An SQL exception has been thrown while excuting a join querry on  " + inspectorA.getTableName() + " and "
+							+ inspectorB.getTableName() + " and "+ JointInspector.getTableName()  + " sql ==> "+ sql 
+							+ " check the stack trace to debug" + ANSI_RESET);
 					e.printStackTrace();
 				}
 			} );
@@ -523,8 +529,9 @@ public class DQL {
 					row.put(column, rs.getObject(column));
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					log.error("An SQL exception has been thrown while excuting a join querry on  " + inspectorA.getTableName() + " and "
-							+ inspectorB.getTableName() + " and "+ JointInspector.getTableName()  + " sql ==> "+ sql + " check the stack trace to debug");
+					log.error(ANSI_RED + "An SQL exception has been thrown while excuting a join querry on  " + inspectorA.getTableName() + " and "
+							+ inspectorB.getTableName() + " and "+ JointInspector.getTableName() 
+							+ " sql ==> "+ sql + " check the stack trace to debug" + ANSI_RESET);
 					e.printStackTrace();
 				}
 			} );

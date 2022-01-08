@@ -90,6 +90,9 @@ import com.revature.util.DataBase;
 public class Transaction {
 	private  Connection conn;
 	private static final Logger log = LoggerFactory.getLogger(Transaction.class);
+	public static final String ANSI_RESET = "\u001B[0m";
+	public static final String ANSI_RED = "\u001B[31m";
+	public static final String ANSI_YELLOW = "\u001B[33m";
 	
 	// this block will be invoked each time the we instantiate  a new transaction 
 	 {
@@ -113,7 +116,7 @@ public class Transaction {
 	 public void end() {
 		 try {
 			conn.close();
-			System.out.println("Transaction ended");
+			log.info("Transaction ended");
 			this.finalize();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -135,7 +138,7 @@ public class Transaction {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			
-			log.error("Commit failed ");
+			log.error(ANSI_RED +  "Commit failed " + ANSI_RESET);
 			e.printStackTrace();
 		}
 	}
@@ -155,7 +158,7 @@ public class Transaction {
 			 return savepoint;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			log.error("savepoint failed ");
+			log.error( ANSI_RED + "savepoint failed " + ANSI_RESET);
 			e.printStackTrace();
 		}
 		return null;
@@ -174,7 +177,7 @@ public class Transaction {
 			log.info("rollback to a savepoint has been invoked ");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			log.error("rollBack failed ");
+			log.error(ANSI_RED + "rollBack failed " + ANSI_RESET);
 			e.printStackTrace();
 		}
 	}
@@ -189,7 +192,7 @@ public class Transaction {
 		 log.info("rollback has been invoked ");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			log.error("rollBack failed ");
+			log.error(ANSI_RED + "rollBack failed " + ANSI_RESET);
 			e.printStackTrace();
 		}
 	}

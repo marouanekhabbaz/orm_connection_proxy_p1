@@ -1,4 +1,4 @@
-package com.revatrure.demo;
+package com.revatrure.demo1;
 
 import java.beans.ConstructorProperties;
 

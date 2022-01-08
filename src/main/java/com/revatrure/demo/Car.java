@@ -16,23 +16,24 @@ public class Car {
 	@Id(columnName="car_id")
 	private int id;
 	
-	@Column(columnName="car_model", dataType ="varchar(50)", defaultValue = " 'blue' ")
+	@Column(columnName="car_model", dataType ="varchar(50)")
 	private String model;
 	
-	@Column(columnName="color", dataType = "varchar(50)", nullable = false)
+	@Column(columnName="color", dataType = "varchar(50)" , defaultValue = " 'blue' ")
 	private String color;
 	
-	@Column(columnName = "doors", dataType = "INTEGER", defaultValue= "1")
-	private int doors ;
+	@Column(columnName = "price", dataType = "INTEGER",  nullable = false)
+	private int price ;
 	
-	@ForeignKey(columnName = "forignKey", joinedColumn = "person_id" , joinedTable = "persons")
-	@Column(columnName="forignKey", dataType = "INTEGER" , refrences = "persons(person_id)")
-	private String forignKey;
-	
-	public String marouane;
+	@ForeignKey(columnName = "owner", joinedColumn = "client_id" , joinedTable = "clients")
+	@Column(columnName="owner", dataType = "INTEGER" , refrences = "clients(client_id)" , defaultValue = "null")
+	private Integer owner;
 	
 	
-	public String anas ;
+	public String notMapped1;
+	
+	
+	public String notMapped2 ;
 	
 	
 	
@@ -40,17 +41,23 @@ public class Car {
 	public Car() {
 	
 	}
+		
 	
 	
-	
-	
-
-
-
-	@ConstructorProperties(value = { "car_id",  "car_model" , "color" })
-	public Car(int id, String firstName, String color) {
-		super();
+	@ConstructorProperties(value = { "car_id",  "car_model" , "color" , "price", "owner" })
+	public Car(int id, String model, String color, int price, Integer owner) {
 		this.id = id;
+		this.model = model;
+		this.color = color;
+		this.price = price;
+		this.owner = owner;
+	}
+
+
+
+	public Car(String firstName, String color ,  int price) {
+		super();
+		this.price = price;
 		this.model = firstName;
 		this.color = color;
 	}
@@ -62,51 +69,86 @@ public class Car {
 		this.color = color;
 	}
 
+
+
 	public int getId() {
 		return id;
 	}
+
+
 
 	public void setId(int id) {
 		this.id = id;
 	}
 
+
+
 	public String getModel() {
 		return model;
 	}
+
+
 
 	public void setModel(String model) {
 		this.model = model;
 	}
 
+
+
 	public String getColor() {
 		return color;
 	}
+
+
 
 	public void setColor(String color) {
 		this.color = color;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(color, id, model);
+
+
+	public int getPrice() {
+		return price;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Car other = (Car) obj;
-		return Objects.equals(color, other.color) && id == other.id && Objects.equals(model, other.model);
+
+
+	public void setPrice(int price) {
+		this.price = price;
 	}
+
+
+
+	public int getOwner() {
+		return owner;
+	}
+
+
+
+	public void setOwner(int owner) {
+		this.owner = owner;
+	}
+
+
+
+	public String getNotMapped1() {
+		return notMapped1;
+	}
+
+
+
+	public void setNotMapped1(String notMapped1) {
+		this.notMapped1 = notMapped1;
+	}
+
+
 
 	@Override
 	public String toString() {
-		return "Car [id=" + id + ", model=" + model + ", color=" + color + "]";
+		return "Car [id=" + id + ", model=" + model + ", color=" + color + ", price=" + price + ", owner=" + owner
+				+ "]";
 	}
+
 	
 	
 	
